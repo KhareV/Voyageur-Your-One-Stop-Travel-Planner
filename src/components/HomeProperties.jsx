@@ -1,23 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PropertyCard from "./PropertyCard";
 import properties from "../../properties.json";
 
-const HomeProperties = ({ selectedFilters }) => {
-  const [visibleCount, setVisibleCount] = useState(5); // Start with 5 properties
+const HomeProperties = ({ selectedFilters = [] }) => {
+  const [visibleCount, setVisibleCount] = useState(5); // Show 5 properties initially
+  const [filteredProperties, setFilteredProperties] = useState([]);
+
+  useEffect(() => {
+    // Ensure selectedFilters is always an array
+    const filtered = properties.filter((property) => {
+      if (!Array.isArray(selectedFilters) || selectedFilters.length === 0) {
+        return true;
+      }
+      return selectedFilters.every((filter) =>
+        property.amenities.includes(filter)
+      );
+    });
+
+    setFilteredProperties(filtered);
+  }, [selectedFilters]);
 
   const loadMoreProperties = () => {
     setVisibleCount((prev) => prev + 5); // Load 5 more properties
   };
-
-  // Filter properties based on selected filters
-  const filteredProperties = properties.filter((property) => {
-    // Check if all selected filters are included in the property amenities
-    if (selectedFilters.length === 0) return true; // If no filters are selected, show all properties
-
-    return selectedFilters.every((filter) =>
-      property.amenities.includes(filter)
-    );
-  });
 
   return (
     <>
@@ -27,11 +32,10 @@ const HomeProperties = ({ selectedFilters }) => {
             Recent Properties
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Only display properties that are included in the filtered list */}
             {filteredProperties.slice(0, visibleCount).map((property) => (
               <div
                 key={property._id}
-                className="transition-opacity duration-500 opacity-0 animate-fade-in"
+                className="transition-opacity duration-500 opacity-100"
               >
                 <PropertyCard property={property} />
               </div>
@@ -40,16 +44,16 @@ const HomeProperties = ({ selectedFilters }) => {
         </div>
       </section>
 
-      <section className="m-auto max-w-lg my-10 px-6 text-center">
-        {visibleCount < filteredProperties.length && (
+      {visibleCount < filteredProperties.length && (
+        <section className="m-auto max-w-lg my-10 px-6 text-center">
           <button
             onClick={loadMoreProperties}
-            className="bg-red-500 text-white text-center py-4 px-6 rounded-xl hover:bg-gray-700 transition-transform duration-300 hover:scale-105"
+            className="bg-red-500 text-white py-4 px-6 rounded-xl hover:bg-gray-700 transition-transform duration-300 hover:scale-105"
           >
             Load More Properties
           </button>
-        )}
-      </section>
+        </section>
+      )}
     </>
   );
 };
