@@ -106,15 +106,15 @@ const AirbnbNavbar = () => {
     <div className="min-h-screen bg-gray-50">
       <nav
         className={`flex justify-between items-center px-6 bg-white sticky top-0 z-50 shadow-lg transition-all duration-300 ${
-          isScrolled ? "py-2" : "py-3"
+          isScrolled ? "py-1" : "py-1"
         }`}
       >
-        <div className="flex items-center space-x-8">
+        <div className="flex items-center space-x-4">
           <img
             src={airbnbLogo}
             alt="Airbnb Logo"
             className={`transition-all duration-300 ${
-              isScrolled ? "h-8" : "h-12"
+              isScrolled ? "h-20" : "h-40"
             } hover:scale-105`}
           />
           <div className="flex space-x-6">
@@ -195,7 +195,7 @@ const AirbnbNavbar = () => {
 
         <div className="flex items-center space-x-6 relative" ref={dropdownRef}>
           <button className="px-4 py-2 rounded-full font-medium text-gray-800 hover:bg-gray-100 transition-colors duration-300">
-            Airbnb your home
+            Voyageur your home
           </button>
           <FaGlobe className="text-gray-700 text-xl cursor-pointer hover:text-red-500 transition-colors duration-300" />
 
