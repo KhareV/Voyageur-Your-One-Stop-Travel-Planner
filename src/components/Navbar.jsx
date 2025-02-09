@@ -41,9 +41,9 @@ const AirbnbNavbar = () => {
   }, []);
 
   return (
-    <div className=" bg-gray-50">
+    <div className="bg-gray-50 flex flex-col">
       <nav
-        className={`flex justify-between items-center px-6 bg-white sticky top-0 z-50 shadow-lg transition-all duration-300 ${
+        className={`flex justify-between items-center px-6 bg-white fixed top-0 left-0 w-full z-40 shadow-lg transition-all duration-300 ${
           isScrolled ? "py-1" : "py-1"
         }`}
       >

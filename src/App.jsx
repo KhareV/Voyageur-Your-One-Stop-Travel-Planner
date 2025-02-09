@@ -5,6 +5,8 @@ import HomeProperties from "./components/HomeProperties.jsx";
 import Footer from "./components/Footer.jsx";
 import NotFoundPage from "./components/NotFound.jsx";
 import HomePage from "./components/HomePage.jsx";
+import PropertyDetails from "./components/PropertyPage.jsx"; // Import the PropertyDetails component
+
 const App = () => {
   return (
     <Router>
@@ -12,6 +14,8 @@ const App = () => {
         <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/property/:id" element={<PropertyDetails />} />{" "}
+          {/* Add this route */}
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
         <Footer />

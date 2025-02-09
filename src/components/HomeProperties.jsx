@@ -1,24 +1,38 @@
 import { useState, useEffect } from "react";
 import PropertyCard from "./PropertyCard";
-import properties from "../../properties.json";
 
 const HomeProperties = ({ selectedFilters = [] }) => {
   const [visibleCount, setVisibleCount] = useState(5); // Show 5 properties initially
   const [filteredProperties, setFilteredProperties] = useState([]);
+  const [allProperties, setAllProperties] = useState([]);
 
   useEffect(() => {
-    // Ensure selectedFilters is always an array
-    const filtered = properties.filter((property) => {
-      if (!Array.isArray(selectedFilters) || selectedFilters.length === 0) {
-        return true;
+    const fetchProperties = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/properties"); // API endpoint
+        const data = await response.json();
+        setAllProperties(data); // Store all properties
+        setFilteredProperties(data); // Initially set filtered data
+      } catch (error) {
+        console.error("Error fetching properties:", error);
       }
-      return selectedFilters.every((filter) =>
-        property.amenities.includes(filter)
-      );
-    });
+    };
+
+    fetchProperties();
+  }, []);
+
+  useEffect(() => {
+    if (!Array.isArray(selectedFilters) || selectedFilters.length === 0) {
+      setFilteredProperties(allProperties);
+      return;
+    }
+
+    const filtered = allProperties.filter((property) =>
+      selectedFilters.every((filter) => property.amenities.includes(filter))
+    );
 
     setFilteredProperties(filtered);
-  }, [selectedFilters]);
+  }, [selectedFilters, allProperties]);
 
   const loadMoreProperties = () => {
     setVisibleCount((prev) => prev + 5); // Load 5 more properties

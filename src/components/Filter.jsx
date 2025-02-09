@@ -54,11 +54,11 @@ const FilterModal = ({ isOpen, onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-opacity-70 z-50 flex justify-center items-center p-4 transform transition all duration-300"
+      className="fixed inset-0 bg-black bg-opacity-70 z-50 flex justify-center items-center p-4 transform transition-all duration-300"
       onClick={onClose}
     >
       <div
-        className="w-[500px] bg-white rounded-xl h-[90vh] overflow-y-auto p-6 shadow-2xl"
+        className="w-[500px] bg-white rounded-xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl mt-20" // Added mt-20 for spacing below navbar
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-6">
