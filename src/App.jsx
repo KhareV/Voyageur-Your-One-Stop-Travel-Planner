@@ -5,7 +5,7 @@ import HomeProperties from "./components/HomeProperties.jsx";
 import Footer from "./components/Footer.jsx";
 import NotFoundPage from "./components/NotFound.jsx";
 import HomePage from "./components/HomePageHouse.jsx";
-import PropertyDetails from "./components/PropertyPage.jsx"; // Import the PropertyDetails component
+import PropertyDetails from "./components/PropertyPage.jsx"; 
 import TravelBooking from "./travel-components/TravelBooking.jsx";
 import PropertyAddForm from "./components/AddPropertyPage.jsx";
 import { SignIn, useUser } from "@clerk/clerk-react";
@@ -32,7 +32,6 @@ const App = () => {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/property/:id" element={<PropertyDetails />} />{" "}
-          {/* Add this route */}
           <Route path="/travel" element={<TravelBooking />} />
           <Route path="/sign-in" element={<SignInPage />} />
           <Route
