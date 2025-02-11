@@ -12,15 +12,27 @@ const PropertyImages = ({ images = [] }) => {
         <div className="container mx-auto">
           {images.length === 1 ? (
             <Item
-              original={`/properties/${images[0]}`}
-              thumbnail={`/properties/${images[0]}`}
+              original={
+                images?.[0]?.includes("https://")
+                  ? images[0]
+                  : `/properties/${images[0]}`
+              }
+              thumbnail={
+                images?.[0]?.includes("https://")
+                  ? images[0]
+                  : `/properties/${images[0]}`
+              }
               width="1000"
               height="600"
             >
               {({ open }) => (
                 <img
                   onClick={open} // Ensure click event works
-                  src={`/properties/${images[0]}`}
+                  src={
+                    images?.[0]?.includes("https://")
+                      ? images[0]
+                      : `/properties/${images[0]}`
+                  }
                   alt="Property"
                   className="object-cover h-[400px] w-full rounded-xl cursor-pointer"
                 />
@@ -38,15 +50,27 @@ const PropertyImages = ({ images = [] }) => {
                   }
                 >
                   <Item
-                    original={`/properties/${image}`}
-                    thumbnail={`/properties/${image}`}
+                    original={
+                      image.includes("https://")
+                        ? image
+                        : `/properties/${image}`
+                    }
+                    thumbnail={
+                      image.includes("https://")
+                        ? image
+                        : `/properties/${image}`
+                    }
                     width="1000"
                     height="600"
                   >
                     {({ open }) => (
                       <img
-                        onClick={open} // Fixed click event
-                        src={`/properties/${image}`}
+                        onClick={open}
+                        src={
+                          image.includes("https://")
+                            ? image
+                            : `/properties/${image}`
+                        }
                         alt="Property"
                         className="object-cover h-[400px] w-full rounded-xl cursor-pointer"
                       />

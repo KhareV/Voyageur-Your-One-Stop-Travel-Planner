@@ -24,13 +24,30 @@ const PropertyCard = ({ property }) => {
     return priceString;
   };
 
+  // Function to determine image source
+  const getImageUrl = (image) => {
+    // Check if the image is a full URL (Cloudinary)
+    if (image && image.startsWith("http")) {
+      return image;
+    }
+    // If not, assume it's a local image
+    return `/properties/${image}`;
+  };
+
   return (
     <div className="rounded-xl shadow-lg bg-white overflow-hidden relative transition-transform duration-300 hover:scale-105 hover:shadow-2xl">
       <div className="relative">
         <img
-          src={`/properties/${property.images[0]}`}
+          src={
+            property.images && property.images.length > 0
+              ? getImageUrl(property.images[0])
+              : "/properties/default.jpg"
+          } // Add a default image path
           alt={property.name}
           className="w-full h-64 object-cover rounded-t-xl transition-opacity duration-300 hover:opacity-90"
+          onError={(e) => {
+            e.target.src = "/properties/default.jpg"; // Fallback image if load fails
+          }}
         />
         <div className="absolute top-3 right-3 bg-white px-4 py-2 rounded-lg text-red-500 font-bold shadow-md text-sm transition-all duration-300 hover:bg-red-500 hover:text-white">
           {getRateDisplay()}
@@ -70,7 +87,6 @@ const PropertyCard = ({ property }) => {
               {property.location.city}, {property.location.state}
             </span>
           </div>
-
           <a
             href={`/property/${property._id}`}
             className="mt-3 lg:mt-0 bg-red-500 hover:bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-md hover:shadow-lg"

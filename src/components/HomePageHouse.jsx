@@ -1,4 +1,5 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import FilterButton from "./Filter";
 import Stars from "./Stars";
 import {
@@ -23,6 +24,12 @@ import EarthCanvas from "./Earth";
 const HomePage = () => {
   const [selectedFilters, setSelectedFilters] = useState([]);
   const filterContainerRef = useRef(null);
+  const location = useLocation(); // Get the current route location
+
+  // Scroll to top when navigating to HomePage
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [location.pathname]); // Runs whenever the route changes
 
   const filterButtons = [
     { icon: <FaWifi className="text-xl" />, text: "WiFi" },
@@ -111,7 +118,8 @@ const HomePage = () => {
       <div className="px-6 py-8">
         <HomeProperties selectedFilters={selectedFilters} />
       </div>
-      <div className="relative h-lvh ">
+
+      <div className="relative h-lvh">
         <EarthCanvas />
         <Stars />
       </div>

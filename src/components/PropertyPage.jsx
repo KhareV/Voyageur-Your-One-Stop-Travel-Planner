@@ -35,7 +35,14 @@ const PropertyDetails = () => {
   }
   return (
     <main>
-      <PropertyHeaderImage image={`/properties/${property.images[0]}`} />
+      <PropertyHeaderImage
+        image={
+          property.images?.[0]?.includes("https://")
+            ? property.images[0]
+            : `/properties/${property.images[0]}`
+        }
+      />
+
       <div className="bg-white p-6 rounded-lg shadow-md text-center md:text-left">
         <div className="text-gray-500 mb-4">{property.type}</div>
         <h1 className="text-3xl font-bold mb-4">{property.name}</h1>

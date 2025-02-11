@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import PropertyCard from "./PropertyCard";
 
 const HomeProperties = ({ selectedFilters = [] }) => {
-  const [visibleCount, setVisibleCount] = useState(5); // Show 5 properties initially
+  const [visibleCount, setVisibleCount] = useState(6); // Show 5 properties initially
   const [filteredProperties, setFilteredProperties] = useState([]);
   const [allProperties, setAllProperties] = useState([]);
 
@@ -35,7 +35,7 @@ const HomeProperties = ({ selectedFilters = [] }) => {
   }, [selectedFilters, allProperties]);
 
   const loadMoreProperties = () => {
-    setVisibleCount((prev) => prev + 5); // Load 5 more properties
+    setVisibleCount((prev) => prev + 3); // Load 5 more properties
   };
 
   return (
