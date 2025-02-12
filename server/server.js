@@ -21,6 +21,7 @@ cloudinary.config({
 const Db = process.env.VITE_MONGODB_URI;
 const client = new MongoClient(Db);
 
+// Connect to MongoDB once and reuse connection
 async function connectDB() {
   try {
     await client.connect();
@@ -29,14 +30,21 @@ async function connectDB() {
     console.error("❌ Database connection error:", error);
   }
 }
+connectDB(); // Initialize connection
 
-// Fetch all properties
+// Fetch all properties (sorted by _id)
 app.get("/api/properties", async (req, res) => {
   try {
     const db = client.db("propertydhundo");
-    const properties = await db.collection("properties").find({}).toArray();
+    const properties = await db
+      .collection("properties")
+      .find({})
+      .sort({ _id: 1 }) // Sorting in ascending order
+      .toArray();
+
     res.json(properties);
   } catch (err) {
+    console.error("❌ Error fetching properties:", err);
     res.status(500).json({ error: "Failed to fetch properties" });
   }
 });
@@ -56,6 +64,7 @@ app.get("/api/properties/:id", async (req, res) => {
 
     res.json(property);
   } catch (err) {
+    console.error("❌ Error fetching property:", err);
     res.status(500).json({ error: "Failed to fetch property" });
   }
 });
@@ -70,15 +79,31 @@ app.post("/api/properties", upload.array("images", 4), async (req, res) => {
     const lastProperty = await db
       .collection("properties")
       .find({})
-      .sort({ _id: -1 }) // Sort in descending order to get the highest _id
+      .sort({ _id: -1 }) // Get highest _id
       .limit(1)
       .toArray();
 
     const nextId = lastProperty.length > 0 ? lastProperty[0]._id + 1 : 1; // Start from 1 if no properties exist
 
+    // Upload images to Cloudinary
+    const imageUrls = await Promise.all(
+      req.files.map(async (file) => {
+        return new Promise((resolve, reject) => {
+          const uploadStream = cloudinary.uploader.upload_stream(
+            { folder: "properties" },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result.secure_url);
+            }
+          );
+          uploadStream.end(file.buffer);
+        });
+      })
+    );
+
     // Create the complete property object
     const completePropertyData = {
-      _id: nextId, // Use incremental numeric ID
+      _id: nextId,
       owner: propertyData.owner,
       name: propertyData.name,
       type: propertyData.type,
@@ -90,30 +115,11 @@ app.post("/api/properties", upload.array("images", 4), async (req, res) => {
       amenities: propertyData.amenities,
       rates: propertyData.rates,
       seller_info: propertyData.seller_info,
-      images: [], // Will be populated with Cloudinary URLs
+      images: imageUrls,
       is_featured: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
-
-    // Upload images to Cloudinary
-    const imageUrls = [];
-    for (const file of req.files) {
-      const result = await new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          { folder: "properties" },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          }
-        );
-        uploadStream.end(file.buffer);
-      });
-      imageUrls.push(result.secure_url);
-    }
-
-    // Add image URLs to property data
-    completePropertyData.images = imageUrls;
 
     // Save property to MongoDB
     await db.collection("properties").insertOne(completePropertyData);
@@ -148,6 +154,7 @@ app.put("/api/properties/:id", async (req, res) => {
 
     res.json({ message: "✅ Property updated successfully" });
   } catch (err) {
+    console.error("❌ Error updating property:", err);
     res.status(500).json({ error: "Failed to update property" });
   }
 });
@@ -168,12 +175,10 @@ app.delete("/api/properties/:id", async (req, res) => {
 
     res.json({ message: "✅ Property deleted successfully" });
   } catch (err) {
+    console.error("❌ Error deleting property:", err);
     res.status(500).json({ error: "Failed to delete property" });
   }
 });
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
-
-// Initialize database connection
-connectDB().catch(console.error);

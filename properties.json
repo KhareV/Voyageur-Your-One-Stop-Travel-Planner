@@ -6,10 +6,10 @@
     "type": "Apartment",
     "description": "This is a beautiful apartment located near the commons. It is a 2 bedroom apartment with a full kitchen and bathroom. It is available for weekly or monthly rentals.",
     "location": {
-      "street": "120 Tremont Street",
+      "street": "136 Boylston Street",
       "city": "Boston",
       "state": "MA",
-      "zipcode": "02108"
+      "zipcode": "02116"
     },
     "beds": 2,
     "baths": 1,
@@ -51,10 +51,10 @@
     "type": "Apartment",
     "description": "A cozy downtown loft with great city views.",
     "location": {
-      "street": "45 Main Street",
+      "street": "225 West 34th Street",
       "city": "New York",
       "state": "NY",
-      "zipcode": "10001"
+      "zipcode": "10122"
     },
     "beds": 1,
     "baths": 1,
@@ -95,10 +95,10 @@
     "type": "Condo",
     "description": "Experience luxury in this stunning condo with breathtaking views.",
     "location": {
-      "street": "500 Lux Lane",
+      "street": "900 S Figueroa Street",
       "city": "Los Angeles",
       "state": "CA",
-      "zipcode": "90001"
+      "zipcode": "90015"
     },
     "beds": 3,
     "baths": 2,
@@ -141,7 +141,7 @@
     "type": "Cottage Or Cabin",
     "description": "Escape to this charming cottage for a peaceful retreat.",
     "location": {
-      "street": "123 Countryside Lane",
+      "street": "1607 San Jacinto Boulevard",
       "city": "Austin",
       "state": "TX",
       "zipcode": "78701"
@@ -175,10 +175,10 @@
     "type": "Studio",
     "description": "Stay in style in this modern downtown studio apartment.",
     "location": {
-      "street": "75 Urban Avenue",
+      "street": "401 North Michigan Avenue",
       "city": "Chicago",
       "state": "IL",
-      "zipcode": "60601"
+      "zipcode": "60611"
     },
     "beds": 1,
     "baths": 1,
@@ -211,10 +211,10 @@
     "type": "House",
     "description": "Escape to this seaside house for a relaxing getaway.",
     "location": {
-      "street": "456 Oceanfront Drive",
-      "city": "Miami",
+      "street": "1100 Collins Avenue",
+      "city": "Miami Beach",
       "state": "FL",
-      "zipcode": "33101"
+      "zipcode": "33139"
     },
     "beds": 4,
     "baths": 3,
@@ -247,10 +247,10 @@
     "type": "Cottage Or Cabin",
     "description": "Experience nature in this cozy rustic cabin.",
     "location": {
-      "street": "789 Forest Lane",
+      "street": "2001 Colorado Boulevard",
       "city": "Denver",
       "state": "CO",
-      "zipcode": "80201"
+      "zipcode": "80205"
     },
     "beds": 2,
     "baths": 1,
@@ -282,10 +282,10 @@
     "type": "Chalet",
     "description": "Hit the slopes from this cozy ski-in/ski-out chalet.",
     "location": {
-      "street": "321 Mountain Road",
-      "city": "Aspen",
+      "street": "425 Wood Road",
+      "city": "Snowmass Village",
       "state": "CO",
-      "zipcode": "81611"
+      "zipcode": "81615"
     },
     "beds": 3,
     "baths": 2,
@@ -317,10 +317,10 @@
     "type": "House",
     "description": "Enjoy stunning mountain views from this spacious retreat.",
     "location": {
-      "street": "600 Summit Drive",
+      "street": "2995 Baseline Road",
       "city": "Boulder",
       "state": "CO",
-      "zipcode": "80301"
+      "zipcode": "80303"
     },
     "beds": 4,
     "baths": 3,
@@ -353,10 +353,10 @@
     "type": "Apartment",
     "description": "Step back in time with a stay in this historic downtown loft.",
     "location": {
-      "street": "123 History Lane",
+      "street": "221 South 12th Street",
       "city": "Philadelphia",
       "state": "PA",
-      "zipcode": "19101"
+      "zipcode": "19107"
     },
     "beds": 2,
     "baths": 1,
