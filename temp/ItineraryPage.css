@@ -1,0 +1,383 @@
+.container {
+  font-family: "Arial", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.nav {
+  background-color: #fff;
+  padding: 10px;
+}
+
+.nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.nav-item {
+  margin-right: 20px;
+  cursor: pointer;
+  color: #000;
+  padding: 8px 12px;
+  border-radius: 5px;
+}
+
+.nav-item.active {
+  background-color: red;
+  color: #fff;
+}
+
+.nav-item:hover {
+  background-color: red;
+  opacity: 0.4;
+  color: white;
+}
+
+/* Form Container */
+.search-form {
+  background-image: url("https://wallpaperaccess.com/full/254381.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.form-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+/* Sections */
+.form-section {
+  padding: 1rem;
+  border-radius: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-section:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+  color: #831b1b;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+}
+
+.input-group {
+  position: relative;
+  margin-bottom: 1rem;
+  color: rgb(255, 255, 255);
+  font-weight: 700;
+}
+
+.modern-input {
+  width: 100%;
+  padding: 0.9rem;
+  margin-top: 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.modern-input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+h2 {
+  font-size: 3rem;
+  color: rgb(0, 0, 0);
+}
+.modern-select {
+  width: 100%;
+  padding: 0.9rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+.counter-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Counters */
+.counter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 5% 10%;
+  gap: 0.5rem;
+}
+
+.counter div {
+  display: flex;
+  align-items: center;
+}
+
+.counter-btn {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  background: red;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.counter-btn:hover {
+  background: #b92929;
+}
+
+.counter-value {
+  min-width: 30px;
+  text-align: center;
+}
+
+.send-message-btn {
+  background: linear-gradient(135deg, #db3c34, #b96329);
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.icon {
+  font-size: 1.2rem;
+}
+
+.room-info {
+  font-size: 1.2rem;
+  color: white;
+}
+
+/* How It Works */
+.how-it-works {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 500px;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1;
+}
+
+.steps {
+  display: flex;
+  gap: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  border-radius: 10px;
+  margin: 0;
+}
+
+.step {
+  color: white;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.tour-div {
+  margin: 2% 5%;
+  background-color: #f5f5f5;
+  color: #2d3e52;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+#tour-header {
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: #1f2a38;
+}
+
+.tour-box {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  justify-items: center;
+}
+
+.tour-loc {
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.tour-loc img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.tour-loc:hover img {
+  transform: scale(1.1);
+}
+
+.tour-inquire {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1rem;
+  padding: 10px;
+  background-color: #fff;
+  border-top: 1px solid #ddd;
+}
+
+.tour-inquire button {
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: none;
+  background-color: red;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.tour-inquire button:hover {
+  background-color: rgb(161, 4, 4);
+  cursor: pointer;
+}
+
+.services {
+  margin: 2% 0;
+  background-color: #f5f5f5;
+  color: #2d3e52;
+  padding: 20px;
+}
+
+.service-box {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 5%;
+  justify-items: center;
+  align-items: flex-start;
+}
+
+.service-div {
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 320px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.service-div h6 {
+  font-size: 1.2rem;
+  color: #f9f9f9;
+  margin-bottom: 10px;
+}
+
+.service-div p {
+  font-size: 0.7rem;
+  color: #ddd;
+  line-height: 1.6;
+}
+
+h4 {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #ffffff;
+  margin-bottom: 20px;
+}
+
+/* Media Queries*/
+@media (max-width: 1200px) {
+  .service-box {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .steps {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-list {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+  }
+
+  .search-form {
+    padding: 1.5rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tour-box {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .service-box {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-item {
+    font-size: 0.7rem;
+  }
+  .tour-loc img {
+    height: 150px;
+  }
+
+  .nav-item {
+    margin-bottom: 10px;
+  }
+
+  .steps {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .send-message-btn {
+    padding: 0.6rem 1rem;
+  }
+
+  .counter-btn {
+    width: 25px;
+    height: 25px;
+    font-size: 1rem;
+  }
+}
