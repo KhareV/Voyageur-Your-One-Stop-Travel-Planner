@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 const cloudinary = require("cloudinary").v2;
 const multer = require("multer");
 require("dotenv").config();
@@ -180,5 +180,173 @@ app.delete("/api/properties/:id", async (req, res) => {
   }
 });
 
+app.get("/api/trips", async (req, res) => {
+  try {
+    const db = client.db("propertydhundo");
+    const trips = await db
+      .collection("trips")
+      .find({})
+      .sort({ id: 1 }) // Sorting in ascending order
+      .toArray();
+    res.json(trips);
+  } catch (err) {
+    console.error("❌ Error fetching trips:", err);
+    res.status(500).json({ error: "Failed to fetch trips" });
+  }
+});
+
+// Fetch a single trip by ID
+app.get("/api/trips/:id", async (req, res) => {
+  try {
+    const db = client.db("propertydhundo");
+    const tripId = parseInt(req.params.id);
+    const trip = await db.collection("trips").findOne({ id: tripId });
+    if (!trip) {
+      return res.status(404).json({ error: "Trip not found" });
+    }
+    res.json(trip);
+  } catch (err) {
+    console.error("❌ Error fetching trip:", err);
+    res.status(500).json({ error: "Failed to fetch trip" });
+  }
+});
+
+// Create a new trip with incremental numeric _id
+
+app.post("/api/trips", upload.array("images", 4), async (req, res) => {
+  try {
+    console.log("Received request body:", req.body);
+    console.log("Received files:", req.files);
+
+    const db = client.db("propertydhundo");
+
+    if (!req.body.tripData) {
+      return res.status(400).json({ error: "Trip data is missing" });
+    }
+
+    let tripData;
+    try {
+      tripData = JSON.parse(req.body.tripData);
+    } catch (parseError) {
+      console.error("JSON parsing error:", parseError);
+      return res.status(400).json({ error: "Invalid trip data format" });
+    }
+
+    if (!tripData.id) {
+      return res.status(400).json({ error: "Trip ID is required" });
+    }
+
+    if (!client.topology || !client.topology.isConnected()) {
+      return res.status(500).json({ error: "Database connection error" });
+    }
+
+    const existingTrip = await db
+      .collection("trips")
+      .findOne({ id: parseInt(tripData.id) });
+
+    if (existingTrip) {
+      return res
+        .status(409)
+        .json({ error: "Trip with this ID already exists" });
+    }
+
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ error: "No images provided" });
+    }
+
+    const imageUrls = await Promise.all(
+      req.files.map(async (file) => {
+        return new Promise((resolve, reject) => {
+          const uploadStream = cloudinary.uploader.upload_stream(
+            { folder: "trips" },
+            (error, result) => {
+              if (error) {
+                console.error("Cloudinary upload error:", error);
+                return reject(
+                  new Error(`Cloudinary upload failed: ${error.message}`)
+                );
+              }
+              resolve(result.secure_url);
+            }
+          );
+          uploadStream.end(file.buffer);
+        });
+      })
+    );
+
+    const completeTripData = {
+      _id: new ObjectId(),
+      id: parseInt(tripData.id),
+      tripName: tripData.tripName,
+      destination: tripData.destination,
+      startDate: tripData.startDate,
+      endDate: tripData.endDate,
+      activities: tripData.activities,
+      expenses: tripData.expenses,
+      totalExpenses: tripData.totalExpenses,
+      journalEntries: tripData.journalEntries,
+      images: imageUrls,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    try {
+      await db.collection("trips").insertOne(completeTripData);
+    } catch (dbError) {
+      console.error("Database insertion error:", dbError);
+      return res.status(500).json({ error: "Failed to save trip to database" });
+    }
+
+    res.status(201).json({
+      message: "✅ Trip created successfully",
+      trip: completeTripData,
+    });
+  } catch (error) {
+    console.error("❌ Error creating trip:", error);
+    res.status(500).json({
+      error: "Failed to create trip",
+      details: error.message,
+    });
+  }
+});
+
+// Update a trip by ID
+app.put("/api/trips/:id", async (req, res) => {
+  try {
+    const db = client.db("propertydhundo");
+    const tripId = parseInt(req.params.id);
+    const updatedData = req.body;
+
+    const result = await db.collection("trips").updateOne(
+      { id: tripId }, // ✅ Corrected filter
+      { $set: { ...updatedData, updatedAt: new Date().toISOString() } }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ error: "Trip not found" });
+    }
+    res.json({ message: "✅ Trip updated successfully" });
+  } catch (err) {
+    console.error("❌ Error updating trip:", err);
+    res.status(500).json({ error: "Failed to update trip" });
+  }
+});
+
+// Delete a trip by ID
+app.delete("/api/trips/:id", async (req, res) => {
+  try {
+    const db = client.db("propertydhundo");
+    const tripId = parseInt(req.params.id);
+    const result = await db.collection("trips").deleteOne({ id: tripId });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: "Trip not found" });
+    }
+    res.json({ message: "✅ Trip deleted successfully" });
+  } catch (err) {
+    console.error("❌ Error deleting trip:", err);
+    res.status(500).json({ error: "Failed to delete trip" });
+  }
+});
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+// Fetch all trips (sorted by _id)

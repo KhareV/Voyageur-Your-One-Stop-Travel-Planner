@@ -15,7 +15,7 @@ const AirbnbNavbar = () => {
   const [activeInput, setActiveInput] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedTab, setSelectedTab] = useState("homes");
+  const [selectedTab, setSelectedTab] = useState("");
   const [isTabChanging, setIsTabChanging] = useState(false);
   const dropdownRef = useRef(null);
   const { user } = useUser();
@@ -224,7 +224,24 @@ const AirbnbNavbar = () => {
               </div>
             </SignedOut>
             <SignedIn>
-              <UserButton afterSignOutUrl="/" />
+              <div className="flex items-center ">
+                {/* User Profile Section */}
+                <div className="border-r-2 border-gray-300 pr-2">
+                  <UserButton afterSignOutUrl="/" />
+                </div>
+
+                {/* View Dashboard Button */}
+                <div>
+                  <button
+                    className=" text-black rounded-lg hover:bg-blue-600 transition-colors duration-300 hover:text-white"
+                    onClick={() => {
+                      navigate("/user-dashboard");
+                    }}
+                  >
+                    View Your Dashboard
+                  </button>
+                </div>
+              </div>
             </SignedIn>
           </div>
 
@@ -232,15 +249,23 @@ const AirbnbNavbar = () => {
             <div className="absolute top-full right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border z-50 transform transition-all duration-300 ease-in-out animate-fadeIn">
               <div className="p-4">
                 <SignInButton mode="modal">
-                  <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-lg transition-colors duration-300 ease-in-out">
+                  <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-lg transition-colors duration-300 ease-in-out cursor-pointer">
                     Log in
                   </button>
                 </SignInButton>
                 <SignInButton mode="modal">
-                  <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-lg mt-2 transition-colors duration-300 ease-in-out">
+                  <button className="w-full text-left py-2 hover:bg-gray-100 rounded-lg mt-2 transition-colors duration-300 ease-in-out cursor-pointer">
                     Sign up
                   </button>
                 </SignInButton>
+                <button
+                  class="w-full text-left hover:bg-gray-100 rounded-lg mt-2 transition-colors duration-300 ease-in-out cursor-pointer"
+                  onClick={() => {
+                    navigate("/user-dashboard");
+                  }}
+                >
+                  View Your Dashboard
+                </button>
               </div>
             </div>
           )}

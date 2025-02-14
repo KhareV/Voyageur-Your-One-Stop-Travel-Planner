@@ -19,7 +19,7 @@ const NotFoundPage = () => {
               <directionalLight position={[10, 10, 10]} intensity={1} />
               <OrbitControls enableZoom={false} maxPolarAngle={Math.PI / 2} />
               <Suspense fallback={<CanvasLoader />}>
-                <Girl position-y={-3} scale={3} animationName="idle" />
+                <Girl position-y={-3} scale={3} animationName="salute" />
               </Suspense>
             </Canvas>
           </div>
