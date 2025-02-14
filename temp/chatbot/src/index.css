@@ -1,0 +1,327 @@
+/* Dark Theme Chatbot CSS */
+
+/* Importing Google Fonts - Inter */
+@import url("https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap");
+
+/* Dark Theme Color Palette */
+:root {
+  --dark-bg: #1e1e1e; /* Dark background color */
+  --darker-bg: #282828; /* Slightly darker background for elements */
+  --primary-accent: #9067c6; /* Primary accent color (purple) */
+  --primary-accent-hover: #7a55b3; /* Hover state for primary accent */
+  --light-text: #f0f0f0; /* Light text color */
+  --message-bg-user: #9067c6; /* User message background */
+  --message-bg-bot: #333333; /* Bot message background */
+  --border-color: #555555; /* Border color */
+  --shadow-color: rgba(0, 0, 0, 0.3); /* Shadow color for dark theme */
+  --scrollbar-color: #555555; /* Scrollbar color */
+  --error-color: #ff4d4d; /* Error message color */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions for dark theme */
+}
+
+body {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--dark-bg); /* Dark background for body */
+  color: var(--light-text); /* Light text for body */
+}
+
+#chatbot-toggler {
+  position: fixed;
+  bottom: 30px;
+  right: 35px;
+  border: none;
+  height: 50px;
+  width: 50px;
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--primary-accent); /* Primary accent color for toggler */
+  box-shadow: 0 0 20px var(--shadow-color); /* Darker shadow for dark theme */
+  transition: transform 0.3s ease, background-color 0.3s ease; /* Smooth rotation and bg color transition */
+  animation: pulse 2s infinite; /* Pulse animation for chatbot toggler */
+}
+
+#chatbot-toggler:hover {
+  background: var(--primary-accent-hover); /* Darker accent on hover */
+}
+
+.container.show-chatbot #chatbot-toggler {
+  transform: rotate(90deg);
+  animation: none; /* Remove pulse animation when chatbot is shown */
+}
+
+#chatbot-toggler span {
+  color: var(--light-text); /* Light text for toggler icons */
+  position: absolute;
+}
+
+#chatbot-toggler span:last-child,
+.container.show-chatbot #chatbot-toggler span:first-child {
+  opacity: 0;
+}
+
+.container.show-chatbot #chatbot-toggler span:last-child {
+  opacity: 1;
+}
+
+.chatbot-popup {
+  position: fixed;
+  width: 420px;
+  opacity: 0;
+  right: 35px;
+  bottom: 90px;
+  pointer-events: none;
+  transform: scale(0.2);
+  overflow: hidden;
+  background: var(--darker-bg); /* Darker background for popup */
+  border-radius: 15px;
+  transform-origin: bottom right;
+  box-shadow: 0 0 128px 0 var(--shadow-color),
+    /* Darker shadow for popup */ 0 32px 64px -48px var(--shadow-color);
+  transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.3s ease; /* Smooth opacity and transform transition */
+}
+
+.container.show-chatbot .chatbot-popup {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+}
+
+.chatbot-popup .chat-header {
+  display: flex;
+  padding: 15px 22px;
+  align-items: center;
+  background: var(--primary-accent); /* Primary accent color for header */
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-color); /* Border for header bottom */
+}
+
+.chat-header .header-info {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.header-info svg {
+  width: 35px;
+  height: 35px;
+  flex-shrink: 0;
+  padding: 6px;
+  fill: var(--primary-accent); /* Primary accent color for svg fill */
+  background: var(--light-text); /* Light background for svg background */
+  border-radius: 50%;
+}
+
+.header-info .logo-text {
+  color: var(--light-text); /* Light text for logo text */
+  font-weight: 600;
+  font-size: 1.31rem;
+  letter-spacing: 0.02rem;
+}
+
+.chat-header button {
+  border: none;
+  height: 40px;
+  width: 40px;
+  color: var(--light-text); /* Light text for header button */
+  cursor: pointer;
+  padding-top: 2px;
+  margin-right: -10px;
+  font-size: 1.9rem;
+  border-radius: 50%;
+  background: none;
+  transition: background-color 0.3s ease; /* Smooth background color transition */
+}
+
+.chat-header button:hover {
+  background: var(--primary-accent-hover); /* Darker accent on hover */
+}
+
+.chat-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: 460px;
+  overflow-y: auto;
+  margin-bottom: 82px;
+  padding: 25px 22px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-color) transparent; /* Dark scrollbar for dark theme */
+  animation: slideIn 0.5s ease-out forwards; /* Slide in animation for chat body */
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.chat-body .message {
+  display: flex;
+  gap: 11px;
+  align-items: center;
+  opacity: 0; /* Initially hidden for fade-in animation */
+  animation: fadeIn 0.5s ease-out forwards;
+  animation-delay: calc(var(--index) * 0.1s); /* Staggered animation */
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chat-body .message svg {
+  width: 35px;
+  height: 35px;
+  flex-shrink: 0;
+  padding: 6px;
+  fill: var(--light-text); /* Light fill for message svg */
+  align-self: flex-end;
+  margin-bottom: 2px;
+  background: var(
+    --primary-accent
+  ); /* Primary accent color for svg background */
+  border-radius: 50%;
+}
+
+.chat-body .message .message-text {
+  padding: 12px 16px;
+  max-width: 75%;
+  font-size: 0.95rem;
+  word-wrap: break-word;
+  white-space: pre-line;
+}
+.chat-body .message.error .message-text {
+  color: var(--error-color); /* Error color for error messages */
+}
+
+.chat-body .bot-message .message-text {
+  background: var(--message-bg-bot); /* Dark bot message background */
+  color: var(--light-text); /* Light text for bot messages */
+  border-radius: 13px 13px 13px 3px;
+}
+
+.chat-body .user-message {
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.chat-body .user-message .message-text {
+  color: var(--light-text); /* Light text for user messages */
+  background: var(
+    --message-bg-user
+  ); /* Primary accent color for user message background */
+  border-radius: 13px 13px 3px 13px;
+}
+
+.chat-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: var(--darker-bg); /* Darker background for footer */
+  padding: 15px 22px 20px;
+  border-top: 1px solid var(--border-color); /* Border for footer top */
+}
+
+.chat-footer .chat-form {
+  display: flex;
+  align-items: center;
+  position: relative;
+  background: var(--darker-bg); /* Darker background for form */
+  border-radius: 32px;
+  outline: 1px solid var(--border-color); /* Darker border for form outline */
+  box-shadow: 0 0 8px var(--shadow-color); /* Darker shadow for form */
+}
+
+.chat-form:focus-within {
+  outline: 2px solid var(--primary-accent); /* Primary accent color on focus */
+}
+
+.chat-form .message-input {
+  width: 100%;
+  height: 47px;
+  border: none;
+  outline: none;
+  font-size: 0.95rem;
+  padding: 0 17px;
+  background: var(--darker-bg); /* Darker background for input */
+  color: var(--light-text); /* Light text for input */
+}
+
+.chat-form #send-message {
+  height: 35px;
+  width: 35px;
+  border: none;
+  flex-shrink: 0;
+  color: var(--light-text); /* Light text for send button */
+  cursor: pointer;
+  display: none;
+  margin-right: 6px;
+  background: var(--primary-accent); /* Primary accent color for send button */
+  border-radius: 50%;
+  font-size: 1.15rem;
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth bg color and transform transition */
+}
+.chat-form #send-message:hover {
+  transform: scale(1.1); /* Scale up on hover */
+  background: var(--primary-accent-hover); /* Darker accent on hover */
+}
+
+.chat-form .message-input:valid ~ #send-message {
+  display: block;
+}
+
+/* Responsive media query for mobile screens */
+@media (max-width: 520px) {
+  #chatbot-toggler {
+    right: 20px;
+    bottom: 20px;
+  }
+  .chatbot-popup {
+    right: 0;
+    bottom: 0;
+    height: 100%;
+    border-radius: 0;
+    width: 100%;
+  }
+  .chatbot-popup .chat-header {
+    padding: 12px 15px;
+  }
+  .chat-body {
+    height: calc(90% - 55px);
+    padding: 25px 15px;
+  }
+  .chat-footer {
+    padding: 10px 15px 15px;
+  }
+}
