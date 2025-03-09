@@ -10,7 +10,6 @@ import Footer from "./components/Footer.jsx";
 import NotFoundPage from "./components/NotFound.jsx";
 import HomePage from "./components/HomePageHouse.jsx";
 import PropertyDetails from "./components/PropertyPage.jsx";
-import TravelBooking from "./travel-components/TravelBooking.jsx";
 import PropertyAddForm from "./components/AddPropertyPage.jsx";
 import { SignIn, useUser } from "@clerk/clerk-react";
 import SignInPage from "./components/SignIn.jsx";
@@ -19,7 +18,6 @@ import TripView from "./components/TripView.jsx";
 import axios from "axios";
 import TripDetails from "./components/TripDetails.jsx";
 import AddTrip from "./AddTrip.jsx";
-import Diary from "./components/Journal.jsx";
 import AppLayout from "./pages/AppLayout.jsx";
 import { CitiesProvider } from "./contexts/CitiesContext.jsx";
 import CityList from "../src/components-1/CityList.jsx";
@@ -42,7 +40,6 @@ const ProtectedRoute = ({ children }) => {
 
   return children;
 };
-
 const App = () => {
   const [trips, setTrips] = useState([]); // State to store trips data
 
@@ -71,7 +68,6 @@ const App = () => {
             <Route path="/" element={<HomePage />} />
 
             <Route path="/property/:id" element={<PropertyDetails />} />
-            <Route path="/travel" element={<TravelBooking />} />
             <Route path="/sign-in" element={<SignInPage />} />
             <Route
               path="/add-property"
@@ -95,6 +91,7 @@ const App = () => {
             />
             <Route path="/user-dashboard/trips/:id" element={<TripDetails />} />
             <Route path="/user-dashboard/add-trip" element={<AddTrip />} />
+            <Route path="/user-dashboard/chat" element={<ChatBot />} />
             <Route path="/user-dashboard/chat" element={<ChatBot />} />
 
             {/* User Map Routes */}

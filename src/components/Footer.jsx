@@ -1,12 +1,17 @@
 import { FaFacebookF, FaTwitter, FaInstagram } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { Suspense } from "react";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei";
+import Girl from "../components/Girl";
+import CanvasLoader from "./Loading";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-100 text-gray-700 p-8">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
+    <footer className="bg-gray-100 text-gray-700 p-8 relative overflow-hidden">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start">
         {/* Left Side: Footer Content */}
-        <div className="w-full md:w-2/3">
+        <div className="w-full md:w-2/3 space-y-6">
           <div className="grid md:grid-cols-3 gap-8 border-b border-gray-300 pb-6">
             <FooterSection title="Support">
               <FooterLink text="Help Centre" />
@@ -37,7 +42,7 @@ const Footer = () => {
           </div>
 
           {/* Footer Bottom */}
-          <div className="flex flex-col md:flex-row justify-between items-center mt-6 text-sm">
+          <div className="flex flex-col md:flex-row justify-between items-center text-sm mt-6">
             <p className="text-gray-500">
               © 2025 Voyageur, Inc. ·{" "}
               <a href="#" className="hover:text-black transition">
@@ -88,6 +93,24 @@ const Footer = () => {
               </motion.a>
             </div>
           </div>
+        </div>
+
+        {/* Right Side: 3D Model */}
+        <div className="w-full md:w-1/3 h-[300px] md:h-[400px] relative">
+          <Canvas className="absolute inset-0">
+            <ambientLight intensity={7} />
+            <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
+            <directionalLight position={[10, 10, 10]} intensity={1} />
+            <OrbitControls
+              enableZoom={false}
+              maxPolarAngle={Math.PI / 2}
+              autoRotate
+              autoRotateSpeed={0.5}
+            />
+            <Suspense fallback={<CanvasLoader />}>
+              <Girl position-y={-3} scale={3} animationName="salute" />
+            </Suspense>
+          </Canvas>
         </div>
       </div>
     </footer>

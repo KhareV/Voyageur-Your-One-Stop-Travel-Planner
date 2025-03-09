@@ -4,14 +4,13 @@ const { MongoClient, ObjectId } = require("mongodb");
 const cloudinary = require("cloudinary").v2;
 const multer = require("multer");
 require("dotenv").config();
-
+const Stripe = require("stripe");
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 const upload = multer({ storage: multer.memoryStorage() });
 
-// Configure Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -21,7 +20,6 @@ cloudinary.config({
 const Db = process.env.VITE_MONGODB_URI;
 const client = new MongoClient(Db);
 
-// Connect to MongoDB once and reuse connection
 async function connectDB() {
   try {
     await client.connect();
@@ -30,16 +28,15 @@ async function connectDB() {
     console.error("❌ Database connection error:", error);
   }
 }
-connectDB(); // Initialize connection
+connectDB();
 
-// Fetch all properties (sorted by _id)
 app.get("/api/properties", async (req, res) => {
   try {
     const db = client.db("propertydhundo");
     const properties = await db
       .collection("properties")
       .find({})
-      .sort({ _id: 1 }) // Sorting in ascending order
+      .sort({ _id: 1 })
       .toArray();
 
     res.json(properties);
@@ -49,7 +46,6 @@ app.get("/api/properties", async (req, res) => {
   }
 });
 
-// Fetch a single property by ID
 app.get("/api/properties/:id", async (req, res) => {
   try {
     const db = client.db("propertydhundo");
@@ -69,23 +65,20 @@ app.get("/api/properties/:id", async (req, res) => {
   }
 });
 
-// Create a new property with incremental numeric _id
 app.post("/api/properties", upload.array("images", 4), async (req, res) => {
   try {
     const db = client.db("propertydhundo");
     const propertyData = JSON.parse(req.body.propertyData);
 
-    // Fetch the last entry to determine the next _id
     const lastProperty = await db
       .collection("properties")
       .find({})
-      .sort({ _id: -1 }) // Get highest _id
+      .sort({ _id: -1 })
       .limit(1)
       .toArray();
 
-    const nextId = lastProperty.length > 0 ? lastProperty[0]._id + 1 : 1; // Start from 1 if no properties exist
+    const nextId = lastProperty.length > 0 ? lastProperty[0]._id + 1 : 1;
 
-    // Upload images to Cloudinary
     const imageUrls = await Promise.all(
       req.files.map(async (file) => {
         return new Promise((resolve, reject) => {
@@ -101,7 +94,6 @@ app.post("/api/properties", upload.array("images", 4), async (req, res) => {
       })
     );
 
-    // Create the complete property object
     const completePropertyData = {
       _id: nextId,
       owner: propertyData.owner,
@@ -121,7 +113,6 @@ app.post("/api/properties", upload.array("images", 4), async (req, res) => {
       updatedAt: new Date().toISOString(),
     };
 
-    // Save property to MongoDB
     await db.collection("properties").insertOne(completePropertyData);
 
     res.status(201).json({
@@ -134,7 +125,6 @@ app.post("/api/properties", upload.array("images", 4), async (req, res) => {
   }
 });
 
-// Update a property by ID
 app.put("/api/properties/:id", async (req, res) => {
   try {
     const db = client.db("propertydhundo");
@@ -159,7 +149,6 @@ app.put("/api/properties/:id", async (req, res) => {
   }
 });
 
-// Delete a property by ID
 app.delete("/api/properties/:id", async (req, res) => {
   try {
     const db = client.db("propertydhundo");
@@ -186,7 +175,7 @@ app.get("/api/trips", async (req, res) => {
     const trips = await db
       .collection("trips")
       .find({})
-      .sort({ id: 1 }) // Sorting in ascending order
+      .sort({ id: 1 })
       .toArray();
     res.json(trips);
   } catch (err) {
@@ -195,7 +184,6 @@ app.get("/api/trips", async (req, res) => {
   }
 });
 
-// Fetch a single trip by ID
 app.get("/api/trips/:id", async (req, res) => {
   try {
     const db = client.db("propertydhundo");
@@ -210,8 +198,6 @@ app.get("/api/trips/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch trip" });
   }
 });
-
-// Create a new trip with incremental numeric _id
 
 app.post("/api/trips", upload.array("images", 4), async (req, res) => {
   try {
@@ -310,17 +296,18 @@ app.post("/api/trips", upload.array("images", 4), async (req, res) => {
   }
 });
 
-// Update a trip by ID
 app.put("/api/trips/:id", async (req, res) => {
   try {
     const db = client.db("propertydhundo");
     const tripId = parseInt(req.params.id);
     const updatedData = req.body;
 
-    const result = await db.collection("trips").updateOne(
-      { id: tripId }, // ✅ Corrected filter
-      { $set: { ...updatedData, updatedAt: new Date().toISOString() } }
-    );
+    const result = await db
+      .collection("trips")
+      .updateOne(
+        { id: tripId },
+        { $set: { ...updatedData, updatedAt: new Date().toISOString() } }
+      );
 
     if (result.matchedCount === 0) {
       return res.status(404).json({ error: "Trip not found" });
@@ -332,7 +319,6 @@ app.put("/api/trips/:id", async (req, res) => {
   }
 });
 
-// Delete a trip by ID
 app.delete("/api/trips/:id", async (req, res) => {
   try {
     const db = client.db("propertydhundo");
@@ -347,6 +333,20 @@ app.delete("/api/trips/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to delete trip" });
   }
 });
+const stripe = require("stripe")(`${process.env.STRIPE_SECRET_KEY}`);
+app.post("/create-payment-intent", async (req, res) => {
+  try {
+    const { amount, currency } = req.body;
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount,
+      currency,
+    });
+
+    res.json({ clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
-// Fetch all trips (sorted by _id)

@@ -102,7 +102,9 @@ const AirbnbNavbar = () => {
               )}
             </button>
             <button
-              onClick={() => handleTabClick("travel")}
+              onClick={() =>
+                (window.location.href = "https://booking.abeergupta.tech/")
+              }
               className={`group px-4 py-2 rounded-full font-medium transition-all duration-300 ease-in-out relative overflow-hidden
                 ${
                   selectedTab === "travel"
@@ -121,74 +123,6 @@ const AirbnbNavbar = () => {
               )}
             </button>
           </div>
-        </div>
-
-        <div
-          className={`flex items-center rounded-full shadow-sm transition-all duration-500 ease-in-out ${
-            isSearchActive
-              ? "bg-gray-100 scale-105 shadow-md ring-2 ring-red-100"
-              : "bg-gray-50 hover:shadow-md"
-          } px-6 py-2 space-x-4 w-full max-w-xl`}
-        >
-          <input
-            type="text"
-            placeholder="Where"
-            className={`w-full px-4 py-2 outline-none rounded-full text-sm transition-all duration-300 ease-in-out ${
-              activeInput === "where"
-                ? "bg-white shadow-md scale-105"
-                : "bg-transparent hover:bg-gray-100"
-            }`}
-            onFocus={() => {
-              setIsSearchActive(true);
-              setActiveInput("where");
-            }}
-            onBlur={() => {
-              setIsSearchActive(false);
-              setActiveInput(null);
-            }}
-          />
-          <div className="h-6 w-px bg-gray-300" />
-          <input
-            type="text"
-            placeholder="Check in"
-            className={`w-full px-4 py-2 outline-none rounded-full text-sm transition-all duration-300 ease-in-out ${
-              activeInput === "checkin"
-                ? "bg-white shadow-md scale-105"
-                : "bg-transparent hover:bg-gray-100"
-            }`}
-            onFocus={() => {
-              setIsSearchActive(true);
-              setActiveInput("checkin");
-            }}
-            onBlur={() => {
-              setIsSearchActive(false);
-              setActiveInput(null);
-            }}
-          />
-          <div className="h-6 w-px bg-gray-300" />
-          <input
-            type="text"
-            placeholder="Check out"
-            className={`w-full px-4 py-2 outline-none rounded-full text-sm transition-all duration-300 ease-in-out ${
-              activeInput === "checkout"
-                ? "bg-white shadow-md scale-105"
-                : "bg-transparent hover:bg-gray-100"
-            }`}
-            onFocus={() => {
-              setIsSearchActive(true);
-              setActiveInput("checkout");
-            }}
-            onBlur={() => {
-              setIsSearchActive(false);
-              setActiveInput(null);
-            }}
-          />
-          <button className="bg-red-500 text-white rounded-full p-3 hover:bg-red-600 transition-all duration-300 ease-in-out group flex items-center transform hover:scale-105 hover:shadow-md">
-            <FaSearch className="text-lg transition-transform duration-300 group-hover:scale-110" />
-            <span className="max-w-0 overflow-hidden group-hover:max-w-[60px] transition-all duration-300 font-semibold ml-0 group-hover:ml-2 opacity-0 group-hover:opacity-100">
-              Search
-            </span>
-          </button>
         </div>
 
         <div className="flex items-center space-x-6 relative" ref={dropdownRef}>

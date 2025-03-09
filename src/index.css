@@ -14,7 +14,7 @@
   animation: fade-in 0.5s ease-in-out forwards;
 }
 body {
-  padding-top: 170px; /* Adjust based on your navbar height */
+  padding-top: 170px;
 }
 :root {
   --color-brand--1: #ffb545;

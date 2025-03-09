@@ -5,8 +5,12 @@ import {
   SignIn,
   RedirectToSignIn,
 } from "@clerk/clerk-react";
+
 import { useNavigate } from "react-router-dom";
 const PropertyAddForm = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [location.pathname]); // Runs whenever the route changes
   const { user, isLoaded, isSignedIn } = useUser();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);

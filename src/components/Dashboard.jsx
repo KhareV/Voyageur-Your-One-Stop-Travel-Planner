@@ -24,6 +24,9 @@ import { Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [location.pathname]); // Runs whenever the route changes
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTrip, setSelectedTrip] = useState(null);
@@ -143,10 +146,7 @@ const Dashboard = () => {
 
             <button
               className="px-6 py-2 border-2 border-purple-600 text-purple-600 rounded-lg 
-              transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:bg-purple-50"
-              onClick={() => {
-                navigate("/user-dashboard/chat");
-              }}
+  transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:bg-purple-50"
             >
               Make Future Itineraries with us
             </button>

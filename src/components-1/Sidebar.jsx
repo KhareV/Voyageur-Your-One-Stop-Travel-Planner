@@ -38,10 +38,6 @@ function Sidebar() {
               <p>
                 <strong>Notes about your trip:</strong> {selectedCity?.notes}
               </p>
-              <p>
-                <strong>About {selectedCity?.name}:</strong>{" "}
-                {selectedCity?.description}
-              </p>
             </div>
             <button onClick={handleCloseModal} className={styles.closeButton}>
               ← Back
