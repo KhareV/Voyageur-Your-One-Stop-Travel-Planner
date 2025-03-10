@@ -2,7 +2,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Globe, MapPin, Calendar, Wallet, Activity } from "lucide-react";
 
 const TripView = ({ trips }) => {
-  // Add empty array fallback
   const safeTrips = trips || [];
 
   return (
@@ -10,15 +9,15 @@ const TripView = ({ trips }) => {
       <AnimatePresence>
         {safeTrips.map((trip) => (
           <TripViewCard
-            key={trip._id} // MongoDB ID
-            id={trip.id} // Pass _id as id
+            key={trip._id}
+            id={trip.id}
             tripName={trip.tripName}
             destination={trip.destination}
             startDate={trip.startDate}
             endDate={trip.endDate}
-            budget={trip.totalExpenses} // Match your data structure
+            budget={trip.totalExpenses}
             expenses={trip.expenses}
-            thumbnail={trip.images?.[0]} // Use first image from array
+            thumbnail={trip.images?.[0]}
           />
         ))}
       </AnimatePresence>
@@ -53,7 +52,6 @@ const TripViewCard = ({
           transition={{ duration: 0.3 }}
         />
 
-        {/* Shimmer overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>
 
@@ -119,7 +117,6 @@ const TripViewCard = ({
         </div>
       </motion.div>
 
-      {/* Hover effect elements */}
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
         <div className="absolute inset-0 animate-shine bg-[linear-gradient(110deg,rgba(255,255,255,0.2),45%,rgba(168,85,247,0.15),55%,rgba(255,255,255,0.2))] bg-[length:200%_100%]" />
       </div>

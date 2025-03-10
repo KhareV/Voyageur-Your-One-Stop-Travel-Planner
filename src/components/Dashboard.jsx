@@ -20,23 +20,17 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import { Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [location.pathname]); // Runs whenever the route changes
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTrip, setSelectedTrip] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Simulating API call - replace with actual fetch
     const fetchTrips = async () => {
       try {
-        // Replace this with actual API endpoint
         const response = await fetch("http://localhost:5000/api/trips");
         const data = await response.json();
         setTrips(data);
@@ -51,7 +45,6 @@ const Dashboard = () => {
     fetchTrips();
   }, []);
 
-  // Process expense data for charts
   const processExpenseData = (expenses) => {
     return Object.entries(expenses)
       .map(([category, amount]) => ({
@@ -114,7 +107,6 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
-        {/* Welcome Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
@@ -153,7 +145,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat, index) => {
             const Icon = stat.icon;
@@ -176,9 +167,7 @@ const Dashboard = () => {
           })}
         </div>
 
-        {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Upcoming Trips */}
           <div className="lg:col-span-2 bg-white rounded-xl shadow-md transform transition-all duration-300 hover:shadow-xl p-6">
             <h2 className="text-xl font-bold mb-4">Upcoming Trips</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -188,7 +177,7 @@ const Dashboard = () => {
                   className="relative group overflow-hidden rounded-lg transform transition-all duration-300 hover:scale-105"
                 >
                   <img
-                    src={trip.images[0]} // Use the first image from the images array
+                    src={trip.images[0]}
                     alt={trip.destination}
                     className="w-full h-48 object-cover"
                   />
@@ -218,7 +207,6 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Recent Journal Entries */}
           <div className="bg-white rounded-xl shadow-md transform transition-all duration-300 hover:shadow-xl p-6">
             <h2 className="text-xl font-bold mb-4">Recent Journal Entries</h2>
             <div className="space-y-4">
@@ -242,7 +230,6 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Expense Distribution */}
           <div className="lg:col-span-3 bg-white rounded-xl shadow-md transform transition-all duration-300 hover:shadow-xl p-6">
             <h2 className="text-xl font-bold mb-4">Expense Distribution</h2>
             <div className="h-80 grid grid-cols-1 lg:grid-cols-2 gap-6">

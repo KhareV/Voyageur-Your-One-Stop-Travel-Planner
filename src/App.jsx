@@ -25,8 +25,6 @@ import City from "./components-1/CityItem.jsx";
 import CountryList from "../src/components-1/CountryList.jsx";
 import Form from "../src/components-1/Form.jsx";
 import ChatBot from "react-chatbotify";
-import DanteBubbleTabIcon from "./components/ChatBotEver.jsx";
-// Protected Route component
 const ProtectedRoute = ({ children }) => {
   const { isLoaded, isSignedIn } = useUser();
 
@@ -41,14 +39,14 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 const App = () => {
-  const [trips, setTrips] = useState([]); // State to store trips data
+  const [trips, setTrips] = useState([]);
 
   // Fetch data from API
   useEffect(() => {
     const fetchTrips = async () => {
       try {
         const response = await axios.get("http://localhost:5000/api/trips");
-        setTrips(response.data); // Store fetched trips data in state
+        setTrips(response.data);
       } catch (error) {
         console.error("Error fetching trips data:", error);
       }
@@ -61,7 +59,6 @@ const App = () => {
     <Router>
       <>
         <Navbar />
-        <DanteBubbleTabIcon />
         <CitiesProvider>
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -94,7 +91,6 @@ const App = () => {
             <Route path="/user-dashboard/chat" element={<ChatBot />} />
             <Route path="/user-dashboard/chat" element={<ChatBot />} />
 
-            {/* User Map Routes */}
             <Route path="/user-dashboard/user-map" element={<AppLayout />}>
               <Route
                 index
@@ -117,7 +113,6 @@ const App = () => {
               <Route path="/user-dashboard/user-map/form" element={<Form />} />
             </Route>
 
-            {/* Catch-all for unknown routes */}
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </CitiesProvider>

@@ -1,7 +1,5 @@
 import { useState, useRef, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import FilterButton from "./Filter";
-import Stars from "./Stars";
 import {
   FaArrowLeft,
   FaArrowRight,
@@ -20,12 +18,6 @@ import { FaElevator, FaKitchenSet } from "react-icons/fa6";
 import { MdBalcony, MdOutdoorGrill } from "react-icons/md";
 import HomeProperties from "./HomeProperties";
 import EarthCanvas from "./Earth";
-import Girl from "../components/Girl";
-import CanvasLoader from "./Loading";
-import { Link } from "react-router-dom";
-import { Suspense } from "react";
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
 import { motion } from "framer-motion";
 
 const HomePage = () => {
@@ -84,12 +76,11 @@ const HomePage = () => {
       transition={{ duration: 0.5 }}
       className="min-h-screen bg-gradient-to-br from-gray-50 to-white"
     >
-      {/* Filter Section */}
       <motion.div
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="sticky top-0 z-50 bg-white/80 backdrop-blur-md px-6 py-4 border-b shadow-sm"
+        className="z-50 bg-white/80 backdrop-blur-md px-6 border-b shadow-sm"
       >
         <div className="flex flex-col items-center justify-between">
           <div className="relative flex items-center w-full">
@@ -137,46 +128,6 @@ const HomePage = () => {
         </div>
       </motion.div>
 
-      {/* Hero Section */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="relative h-[480px] w-full bg-gradient-to-br from-indigo-500/10 to-purple-500/10 overflow-hidden"
-      >
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.8 }}
-          className="absolute inset-0 flex flex-col items-center justify-center z-10"
-        >
-          <h1 className="text-5xl font-bold text-center mb-4 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            Welcome to Voyageur
-          </h1>
-          <p className="text-2xl text-gray-700 text-center">
-            Your One Stop Travel Assistant
-          </p>
-        </motion.div>
-
-        <div className="absolute inset-0">
-          <Canvas>
-            <ambientLight intensity={7} />
-            <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
-            <directionalLight position={[10, 10, 10]} intensity={1} />
-            <OrbitControls
-              enableZoom={false}
-              maxPolarAngle={Math.PI / 2}
-              autoRotate
-              autoRotateSpeed={0.5}
-            />
-            <Suspense fallback={<CanvasLoader />}>
-              <Girl position-y={-3} scale={3} animationName="clapping" />
-            </Suspense>
-          </Canvas>
-        </div>
-      </motion.div>
-
-      {/* Properties Section */}
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -186,7 +137,6 @@ const HomePage = () => {
         <HomeProperties selectedFilters={selectedFilters} />
       </motion.div>
 
-      {/* Earth Section */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -194,7 +144,6 @@ const HomePage = () => {
         className="relative h-lvh"
       >
         <EarthCanvas />
-        <Stars />
       </motion.div>
     </motion.div>
   );

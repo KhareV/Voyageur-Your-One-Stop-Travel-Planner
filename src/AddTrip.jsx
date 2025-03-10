@@ -61,7 +61,6 @@ const AddTrip = () => {
         [category]: parseFloat(value) || 0,
       };
 
-      // Calculate the new totalExpenses
       const newTotalExpenses = Object.values(updatedExpenses).reduce(
         (acc, curr) => acc + curr,
         0
@@ -70,7 +69,7 @@ const AddTrip = () => {
       return {
         ...prev,
         expenses: updatedExpenses,
-        totalExpenses: newTotalExpenses, // Ensure correct field update
+        totalExpenses: newTotalExpenses,
       };
     });
   };
@@ -124,7 +123,6 @@ const AddTrip = () => {
     }
   };
 
-  // Update the image handling functions to work with real files:
   const handleDrop = (e) => {
     e.preventDefault();
     setDragActive(false);
@@ -159,7 +157,6 @@ const AddTrip = () => {
     e.preventDefault();
 
     try {
-      // Validate required fields including ID
       if (
         !formData.id ||
         !formData.tripName ||
@@ -173,14 +170,12 @@ const AddTrip = () => {
         return;
       }
 
-      // Validate ID is a positive number
       const numericId = parseInt(formData.id);
       if (isNaN(numericId) || numericId <= 0) {
         alert("Please enter a valid positive number for Trip ID");
         return;
       }
 
-      // Validate dates
       const start = new Date(formData.startDate);
       const end = new Date(formData.endDate);
       if (end < start) {
@@ -188,19 +183,16 @@ const AddTrip = () => {
         return;
       }
 
-      // Ensure at least one activity is added
       if (formData.activities.every((activity) => !activity.trim())) {
         alert("Please add at least one activity");
         return;
       }
 
-      // Ensure images are added before submitting
       if (formData.images.length === 0) {
         alert("Please upload at least one image before submitting.");
         return;
       }
 
-      // Prepare payload
       const tripPayload = {
         id: numericId,
         tripName: formData.tripName.trim(),
@@ -226,18 +218,14 @@ const AddTrip = () => {
         ),
       };
 
-      // Create FormData object
       const formDataToSend = new FormData();
       formDataToSend.append("tripData", JSON.stringify(tripPayload));
 
-      // Append image files
       formData.images.forEach((file, index) => {
         if (file instanceof File) {
-          // Validate file size (5MB limit)
           if (file.size > 5 * 1024 * 1024) {
             throw new Error(`Image ${index + 1} exceeds 5MB size limit`);
           }
-          // Validate file type
           if (!file.type.startsWith("image/")) {
             throw new Error(`File ${index + 1} is not a valid image`);
           }
@@ -245,10 +233,8 @@ const AddTrip = () => {
         }
       });
 
-      // Show loading state
       setLoading(true);
 
-      // Send request to backend
       const response = await fetch("http://localhost:5000/api/trips", {
         method: "POST",
         body: formDataToSend,
@@ -257,7 +243,6 @@ const AddTrip = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        // Handle specific error cases
         if (response.status === 409) {
           throw new Error(
             "A trip with this ID already exists. Please use a different ID."
@@ -269,16 +254,14 @@ const AddTrip = () => {
         }
       }
 
-      // Success handling
       alert("Trip created successfully!");
-      navigate(`/user-dashboard/trips/${data.trip.id}`); // Redirect to the trip details page
+      navigate(`/user-dashboard/trips/${data.trip.id}`);
     } catch (error) {
       console.error("Submission error details:", {
         message: error.message,
         stack: error.stack,
       });
 
-      // Provide user-friendly error messages
       let errorMessage = "An error occurred while creating the trip.";
       if (error.message.includes("ID already exists")) {
         errorMessage = error.message;
@@ -293,12 +276,10 @@ const AddTrip = () => {
 
       alert(`Error: ${errorMessage}`);
     } finally {
-      // Clear loading state
       setLoading(false);
     }
   };
 
-  // Previous steps remain the same...
   const renderStep = () => {
     switch (currentStep) {
       case 1:
@@ -357,7 +338,6 @@ const AddTrip = () => {
           </div>
         );
 
-      // ... Previous cases remain the same (2, 3, 4) ...
       case 2:
         return (
           <div className="space-y-6">
@@ -586,7 +566,6 @@ const AddTrip = () => {
             Plan Your Adventure
           </h1>
 
-          {/* Progress Bar */}
           <div className="mb-8">
             <div className="h-2 bg-gray-200 rounded-full">
               <div

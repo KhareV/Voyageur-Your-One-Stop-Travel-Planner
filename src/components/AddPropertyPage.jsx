@@ -8,15 +8,11 @@ import {
 
 import { useNavigate } from "react-router-dom";
 const PropertyAddForm = () => {
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [location.pathname]); // Runs whenever the route changes
   const { user, isLoaded, isSignedIn } = useUser();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
-  // Redirect to sign-in if not authenticated
   if (!isLoaded) {
     return <div>Loading...</div>;
   }
@@ -30,7 +26,6 @@ const PropertyAddForm = () => {
     setIsSubmitting(true);
     setError(null);
 
-    // Check number of images
     const imageFiles = e.target.images.files;
     if (imageFiles.length > 4) {
       setError("Maximum 4 images allowed");
@@ -42,7 +37,6 @@ const PropertyAddForm = () => {
       const formData = new FormData(e.target);
       const currentDate = new Date().toISOString();
 
-      // Create property data object
       const propertyData = {
         owner: user.id,
         name: formData.get("name"),
@@ -68,23 +62,20 @@ const PropertyAddForm = () => {
           email: formData.get("seller_info.email"),
           phone: formData.get("seller_info.phone"),
         },
-        images: [], // This will hold the image URLs (added before other properties)
+        images: [],
         is_featured: false,
         createdAt: currentDate,
         updatedAt: currentDate,
       };
 
-      // Create a new FormData for the API request
       const apiFormData = new FormData();
       apiFormData.append("propertyData", JSON.stringify(propertyData));
 
-      // Append images
       const imageFiles = formData.getAll("images");
       imageFiles.forEach((file) => {
         apiFormData.append("images", file);
       });
 
-      // Send request to API
       const response = await fetch(
         `${import.meta.env.VITE_PUBLIC_API_DOMAIN}/properties`,
         {
@@ -97,7 +88,6 @@ const PropertyAddForm = () => {
         throw new Error("Failed to create property");
       }
 
-      // Redirect to properties page on success
       navigate("/");
     } catch (err) {
       console.error("Error:", err);

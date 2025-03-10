@@ -63,7 +63,6 @@ const TripDetails = () => {
     "#FFEEAD",
   ];
 
-  // Mock data for the daily spending chart
   const dailySpendingData = [
     { day: "Day 1", amount: 120 },
     { day: "Day 2", amount: 250 },
@@ -97,7 +96,6 @@ const TripDetails = () => {
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 p-6 transition-all duration-500">
       <div className="max-w-7xl mx-auto space-y-8">
-        {/* Trip Header */}
         <div className="bg-white/80 backdrop-blur-lg rounded-2xl p-8 shadow-xl transition duration-300 hover:shadow-2xl transform hover:-translate-y-1">
           <div className="flex items-center justify-center mb-4">
             <Globe className="w-12 h-12 text-blue-600 animate-spin-slow" />
@@ -116,9 +114,7 @@ const TripDetails = () => {
           </div>
         </div>
 
-        {/* Charts Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Expenses Pie Chart */}
           <div className="bg-white/80 backdrop-blur-lg rounded-2xl p-6 shadow-xl transition duration-300 hover:shadow-2xl">
             <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-green-600">
               <Wallet className="h-6 w-6" /> Expense Breakdown
@@ -147,7 +143,6 @@ const TripDetails = () => {
             </ResponsiveContainer>
           </div>
 
-          {/* Daily Spending Area Chart */}
           <div className="bg-white/80 backdrop-blur-lg rounded-2xl p-6 shadow-xl transition duration-300 hover:shadow-2xl">
             <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-blue-600">
               <Target className="h-6 w-6" /> Daily Spending
@@ -181,7 +176,6 @@ const TripDetails = () => {
           </div>
         </div>
 
-        {/* Activities Section */}
         <div className="bg-white/80 backdrop-blur-lg rounded-2xl p-6 shadow-xl transition duration-300 hover:shadow-2xl">
           <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-indigo-600">
             <Activity className="h-6 w-6" /> Activities
@@ -199,7 +193,6 @@ const TripDetails = () => {
           </div>
         </div>
 
-        {/* Images Section */}
         <div className="bg-white/80 backdrop-blur-lg rounded-2xl p-6 shadow-xl transition duration-300 hover:shadow-2xl">
           <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-pink-600">
             <Camera className="h-6 w-6" /> Trip Memories

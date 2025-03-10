@@ -2,17 +2,17 @@ import { useState, useEffect } from "react";
 import PropertyCard from "./PropertyCard";
 
 const HomeProperties = ({ selectedFilters = [] }) => {
-  const [visibleCount, setVisibleCount] = useState(6); // Show 5 properties initially
+  const [visibleCount, setVisibleCount] = useState(6);
   const [filteredProperties, setFilteredProperties] = useState([]);
   const [allProperties, setAllProperties] = useState([]);
 
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/properties"); // API endpoint
+        const response = await fetch("http://localhost:5000/api/properties");
         const data = await response.json();
-        setAllProperties(data); // Store all properties
-        setFilteredProperties(data); // Initially set filtered data
+        setAllProperties(data);
+        setFilteredProperties(data);
       } catch (error) {
         console.error("Error fetching properties:", error);
       }

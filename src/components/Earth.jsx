@@ -4,13 +4,11 @@ import { OrbitControls, Preload, useGLTF, Text } from "@react-three/drei";
 import * as THREE from "three";
 import CanvasLoader from "../components/Loading";
 
-// Load Earth model
 const Earth = () => {
   const earth = useGLTF("/scene.gltf");
   return <primitive object={earth.scene} scale={2.5} position-y={0} />;
 };
 
-// Convert latitude/longitude to 3D sphere coordinates
 const latLonToVector3 = (lat, lon, radius) => {
   const phi = (90 - lat) * (Math.PI / 180);
   const theta = (lon + 180) * (Math.PI / 180);
@@ -22,7 +20,6 @@ const latLonToVector3 = (lat, lon, radius) => {
   );
 };
 
-// List of capital cities
 const cities = [
   { name: "Washington, D.C.", lat: 38.9072, lon: -77.0369 },
   { name: "Ottawa", lat: 45.4215, lon: -75.6972 },
@@ -53,14 +50,13 @@ const CityLabels = () => {
   const cameraRef = useRef();
 
   useFrame(({ camera }) => {
-    cameraRef.current = camera; // Store the current camera
+    cameraRef.current = camera;
   });
 
   return cities.map((city, index) => {
-    const position = latLonToVector3(city.lat, city.lon, 2.6); // Position labels slightly above the surface
+    const position = latLonToVector3(city.lat, city.lon, 2.6);
     const textRef = useRef();
 
-    // Keep the text always facing the camera
     useFrame(() => {
       if (textRef.current && cameraRef.current) {
         textRef.current.lookAt(cameraRef.current.position);

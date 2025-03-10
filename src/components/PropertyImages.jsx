@@ -1,5 +1,5 @@
 import { Gallery, Item } from "react-photoswipe-gallery";
-import "photoswipe/dist/photoswipe.css"; // Import PhotoSwipe styles
+import "photoswipe/dist/photoswipe.css";
 
 const PropertyImages = ({ images = [] }) => {
   if (!images || images.length === 0) {

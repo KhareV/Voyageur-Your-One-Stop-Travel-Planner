@@ -6,14 +6,12 @@ const SignInPage = () => {
   useEffect(() => {
     const timeline = gsap.timeline({ defaults: { duration: 1 } });
 
-    // Animate background gradient
     timeline.fromTo(
       ".gradient-bg",
       { opacity: 0 },
       { opacity: 1, duration: 2 }
     );
 
-    // Animate sign in container
     timeline.fromTo(
       ".signin-container",
       { y: 100, opacity: 0 },
@@ -21,7 +19,6 @@ const SignInPage = () => {
       "<0.5"
     );
 
-    // Animate text elements
     timeline.fromTo(
       ".text-element",
       { y: 20, opacity: 0 },
@@ -32,7 +29,6 @@ const SignInPage = () => {
 
   return (
     <div className="gradient-bg min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-600 via-purple-500 to-pink-500 relative overflow-hidden">
-      {/* Animated background shapes */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="animate-blob mix-blend-multiply filter blur-xl opacity-70 absolute bg-purple-300 w-72 h-72 rounded-full -top-4 -left-4"></div>
         <div className="animate-blob animation-delay-2000 mix-blend-multiply filter blur-xl opacity-70 absolute bg-yellow-300 w-72 h-72 rounded-full -top-4 -right-4"></div>
@@ -54,7 +50,6 @@ const SignInPage = () => {
           </div>
         </div>
 
-        {/* Hover effect decorative elements */}
         <div className="absolute -top-10 -right-10 w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full blur-xl opacity-70 group-hover:opacity-100 transition-opacity duration-300"></div>
         <div className="absolute -bottom-10 -left-10 w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full blur-xl opacity-70 group-hover:opacity-100 transition-opacity duration-300"></div>
       </div>
