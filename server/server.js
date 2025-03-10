@@ -1,9 +1,10 @@
+require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
 const { MongoClient, ObjectId } = require("mongodb");
 const cloudinary = require("cloudinary").v2;
 const multer = require("multer");
-require("dotenv").config();
 const Stripe = require("stripe");
 const app = express();
 app.use(cors());
