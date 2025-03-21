@@ -139,6 +139,9 @@ const Dashboard = () => {
             <button
               className="px-6 py-2 border-2 border-purple-600 text-purple-600 rounded-lg 
   transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:bg-purple-50"
+              onClick={() => {
+                navigate("/user-dashboard/itinerary");
+              }}
             >
               Make Future Itineraries with us
             </button>

@@ -25,6 +25,7 @@ import City from "./components-1/CityItem.jsx";
 import CountryList from "../src/components-1/CountryList.jsx";
 import Form from "../src/components-1/Form.jsx";
 import ChatBot from "react-chatbotify";
+import AITravelPlannerPage from "./components/AITravelPlanner.jsx";
 const ProtectedRoute = ({ children }) => {
   const { isLoaded, isSignedIn } = useUser();
 
@@ -61,6 +62,10 @@ const App = () => {
         <Navbar />
         <CitiesProvider>
           <Routes>
+            <Route
+              path="/user-dashboard/itinerary"
+              element={<AITravelPlannerPage />}
+            />
             <Route path="/" element={<HomePage />} />
             <Route path="/" element={<HomePage />} />
 
