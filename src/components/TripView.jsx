@@ -14,6 +14,80 @@ import {
 } from "lucide-react";
 import { useRef, useEffect, useState } from "react";
 
+// Star animations styles component
+const StarAnimationStyles = () => (
+  <style jsx global>{`
+    @keyframes twinkle {
+      0%,
+      100% {
+        opacity: 0.2;
+      }
+      50% {
+        opacity: 1;
+      }
+    }
+
+    .stars-sm {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: radial-gradient(1px 1px at 10% 20%, white, transparent),
+        radial-gradient(1px 1px at 20% 50%, white, transparent),
+        radial-gradient(1px 1px at 30% 70%, white, transparent),
+        radial-gradient(1px 1px at 40% 10%, white, transparent),
+        radial-gradient(1px 1px at 50% 30%, white, transparent),
+        radial-gradient(1px 1px at 60% 80%, white, transparent),
+        radial-gradient(1px 1px at 70% 40%, white, transparent),
+        radial-gradient(1px 1px at 80% 90%, white, transparent),
+        radial-gradient(1px 1px at 90% 60%, white, transparent);
+      background-size: 1000px 1000px;
+      animation: twinkle 8s ease-in-out infinite alternate;
+    }
+
+    .stars-md {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: radial-gradient(
+          1.5px 1.5px at 15% 15%,
+          white,
+          transparent
+        ),
+        radial-gradient(1.5px 1.5px at 25% 45%, white, transparent),
+        radial-gradient(1.5px 1.5px at 35% 65%, white, transparent),
+        radial-gradient(1.5px 1.5px at 45% 15%, white, transparent),
+        radial-gradient(1.5px 1.5px at 55% 35%, white, transparent),
+        radial-gradient(1.5px 1.5px at 65% 75%, white, transparent),
+        radial-gradient(1.5px 1.5px at 75% 45%, white, transparent),
+        radial-gradient(1.5px 1.5px at 85% 85%, white, transparent);
+      background-size: 1000px 1000px;
+      animation: twinkle 12s ease-in-out infinite alternate;
+    }
+
+    .stars-lg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: radial-gradient(2px 2px at 5% 25%, white, transparent),
+        radial-gradient(2px 2px at 15% 55%, white, transparent),
+        radial-gradient(2px 2px at 25% 75%, white, transparent),
+        radial-gradient(2px 2px at 35% 5%, white, transparent),
+        radial-gradient(2px 2px at 45% 25%, white, transparent),
+        radial-gradient(2px 2px at 55% 65%, white, transparent),
+        radial-gradient(2px 2px at 65% 35%, white, transparent),
+        radial-gradient(2px 2px at 75% 95%, white, transparent);
+      background-size: 1000px 1000px;
+      animation: twinkle 15s ease-in-out infinite alternate;
+    }
+  `}</style>
+);
+
 // Main component
 const TripView = ({ trips }) => {
   const safeTrips = trips || [];
@@ -652,88 +726,19 @@ const FooterSection = React.forwardRef(({ isActive }, ref) => (
           Back to Dashboard
         </motion.a>
       </motion.div>
-
-      {/* Footer credit */}
     </div>
   </section>
 ));
 
 FooterSection.displayName = "FooterSection";
 
-// Add stars animation styles as a style tag
-const StarAnimationStyles = () => (
-  <style jsx global>{`
-    @keyframes twinkle {
-      0%,
-      100% {
-        opacity: 0.2;
-      }
-      50% {
-        opacity: 1;
-      }
-    }
-
-    .stars-sm {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: radial-gradient(1px 1px at 10% 20%, white, transparent),
-        radial-gradient(1px 1px at 20% 50%, white, transparent),
-        radial-gradient(1px 1px at 30% 70%, white, transparent),
-        radial-gradient(1px 1px at 40% 10%, white, transparent),
-        radial-gradient(1px 1px at 50% 30%, white, transparent),
-        radial-gradient(1px 1px at 60% 80%, white, transparent),
-        radial-gradient(1px 1px at 70% 40%, white, transparent),
-        radial-gradient(1px 1px at 80% 90%, white, transparent),
-        radial-gradient(1px 1px at 90% 60%, white, transparent);
-      background-size: 1000px 1000px;
-      animation: twinkle 8s ease-in-out infinite alternate;
-    }
-
-    .stars-md {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: radial-gradient(
-          1.5px 1.5px at 15% 15%,
-          white,
-          transparent
-        ),
-        radial-gradient(1.5px 1.5px at 25% 45%, white, transparent),
-        radial-gradient(1.5px 1.5px at 35% 65%, white, transparent),
-        radial-gradient(1.5px 1.5px at 45% 15%, white, transparent),
-        radial-gradient(1.5px 1.5px at 55% 35%, white, transparent),
-        radial-gradient(1.5px 1.5px at 65% 75%, white, transparent),
-        radial-gradient(1.5px 1.5px at 75% 45%, white, transparent),
-        radial-gradient(1.5px 1.5px at 85% 85%, white, transparent);
-      background-size: 1000px 1000px;
-      animation: twinkle 12s ease-in-out infinite alternate;
-    }
-
-    .stars-lg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: radial-gradient(2px 2px at 5% 25%, white, transparent),
-        radial-gradient(2px 2px at 15% 55%, white, transparent),
-        radial-gradient(2px 2px at 25% 75%, white, transparent),
-        radial-gradient(2px 2px at 35% 5%, white, transparent),
-        radial-gradient(2px 2px at 45% 25%, white, transparent),
-        radial-gradient(2px 2px at 55% 65%, white, transparent),
-        radial-gradient(2px 2px at 65% 35%, white, transparent),
-        radial-gradient(2px 2px at 75% 95%, white, transparent);
-      background-size: 1000px 1000px;
-      animation: twinkle 15s ease-in-out infinite alternate;
-    }
-  `}</style>
+// Create TripViewWithStars component that includes the star animations
+const TripViewWithStars = (props) => (
+  <>
+    <StarAnimationStyles />
+    <TripView {...props} />
+  </>
 );
 
-// Main component with star animation styles const TripViewWithStars = (props) => ( <> <StarAnimationStyles /> <TripView {...props} /> </> );
-
-export default TripView;
+// Export the component with stars
+export default TripViewWithStars;
