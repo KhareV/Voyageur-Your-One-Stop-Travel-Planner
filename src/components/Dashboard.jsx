@@ -1,4 +1,3 @@
-import React, { useState, useEffect, useRef } from "react";
 import {
   Globe,
   Wallet,
@@ -23,7 +22,25 @@ import {
   ListFilter,
   X,
   Edit,
+  BookAIcon,
 } from "lucide-react";
+import {
+  FaFacebookF,
+  FaTwitter,
+  FaInstagram,
+  FaLinkedinIn,
+  FaYoutube,
+  FaTiktok,
+} from "react-icons/fa";
+import { HiGlobeAlt } from "react-icons/hi";
+import { RiMapPinLine } from "react-icons/ri";
+import { BiCopyright } from "react-icons/bi";
+import { Suspense, useState, useEffect, useRef } from "react";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls, Environment } from "@react-three/drei";
+import CanvasLoader from "./Loading";
+import React from "react";
+import Girl from "./Girl";
 import {
   LineChart,
   Line,
@@ -43,6 +60,27 @@ import {
 } from "recharts";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, info) {
+    console.warn("3D rendering error:", error);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
+}
 
 const Dashboard = () => {
   const [trips, setTrips] = useState([]);
@@ -52,14 +90,18 @@ const Dashboard = () => {
   const scrollRef = useRef(null);
   const [filterOpen, setFilterOpen] = useState(false);
   const [sortOrder, setSortOrder] = useState("recent"); // recent, oldest, budget
-  const [journalModalOpen, setJournalModalOpen] = useState(false);
-  const [newJournalEntry, setNewJournalEntry] = useState({
-    title: "",
-    content: "",
-    date: new Date().toISOString().split("T")[0],
-    tripId: "",
-  });
+
   const navigate = useNavigate();
+  const [canvasVisible, setCanvasVisible] = useState(true);
+  const canvasErrorCount = useRef(0);
+
+  // Handle Canvas errors to prevent repeated crashes
+  const handleCanvasError = () => {
+    canvasErrorCount.current += 1;
+    if (canvasErrorCount.current > 2) {
+      setCanvasVisible(false);
+    }
+  };
 
   // Animation variants
   const containerVariants = {
@@ -293,6 +335,15 @@ const Dashboard = () => {
                   <Compass size={18} />
                   View All Trips
                 </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="px-6 py-3 flex items-center gap-2 bg-purple-100/30 backdrop-blur-sm border border-white/20 text-white rounded-lg"
+                  onClick={() => navigate("/user-dashboard/journals")}
+                >
+                  <BookAIcon size={18} />
+                  Your Journals
+                </motion.button>
               </div>
             </div>
           </motion.div>
@@ -324,7 +375,7 @@ const Dashboard = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            {["overview", "trips", "expenses", "journal"].map((tab) => (
+            {["overview", "trips", "expenses"].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -743,72 +794,108 @@ const Dashboard = () => {
                   </div>
 
                   {/* Recent Journal Entries */}
-                  <div className="bg-white rounded-2xl shadow-md p-6">
-                    <div className="flex justify-between items-center mb-6">
-                      <h2 className="text-xl font-bold text-gray-800 flex items-center">
-                        <Book className="mr-2 h-5 w-5 text-indigo-500" />
-                        Journal Entries
-                      </h2>
-                      <button
-                        className="text-indigo-600 text-sm font-medium flex items-center"
-                        onClick={() => setActiveTab("journal")}
-                      >
-                        View All
-                        <ChevronRight size={16} className="ml-1" />
-                      </button>
-                    </div>
-
-                    <div className="space-y-4">
-                      {allJournalEntries.slice(0, 3).map((entry, index) => (
-                        <motion.div
-                          key={`journal-${index}`}
-                          whileHover={{ x: 5 }}
-                          className="flex items-start space-x-4 p-3 rounded-lg hover:bg-indigo-50 transition-colors cursor-pointer"
+                  <div className="lg:col-span-3 relative">
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.7, delay: 0.5 }}
+                      className="h-[350px] md:h-[375px] border border-white/10 bg-white/5 backdrop-blur-sm rounded-2xl overflow-hidden relative shadow-xl shadow-purple-900/20"
+                    >
+                      {canvasVisible ? (
+                        <ErrorBoundary
+                          fallback={
+                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-800 to-purple-800">
+                              <div className="text-center p-6">
+                                <motion.div
+                                  className="w-16 h-16 mx-auto mb-3 bg-indigo-600/30 rounded-full flex items-center justify-center"
+                                  animate={{ rotate: 360 }}
+                                  transition={{
+                                    repeat: Infinity,
+                                    duration: 8,
+                                    ease: "linear",
+                                  }}
+                                >
+                                  <span className="text-2xl">✨</span>
+                                </motion.div>
+                                <h4 className="text-white font-medium">
+                                  Interactive Experience
+                                </h4>
+                                <p className="text-indigo-200 text-sm mt-2">
+                                  Explore our virtual adventures
+                                </p>
+                              </div>
+                            </div>
+                          }
                         >
-                          <div className="flex-shrink-0">
-                            <div className="relative">
-                              <img
-                                src={
-                                  entry.image ||
-                                  "https://via.placeholder.com/80x80?text=Trip"
-                                }
-                                alt={entry.destination || "Trip"}
-                                className="w-12 h-12 rounded-lg object-cover"
+                          <div
+                            className="w-full h-full"
+                            onError={handleCanvasError}
+                          >
+                            <Canvas
+                              shadows
+                              camera={{ position: [0, 0, 10], fov: 25 }}
+                              className="!absolute inset-0"
+                            >
+                              <ambientLight intensity={1.5} />
+                              <spotLight
+                                position={[10, 10, 10]}
+                                angle={0.15}
+                                penumbra={1}
                               />
-                              <div className="absolute -top-2 -right-2 bg-white rounded-full p-0.5">
-                                <div className="bg-indigo-100 rounded-full p-1">
-                                  <Book className="h-3 w-3 text-indigo-600" />
-                                </div>
-                              </div>
-                            </div>
+                              <directionalLight
+                                position={[10, 10, 10]}
+                                intensity={1}
+                              />
+                              <OrbitControls
+                                enableZoom={false}
+                                maxPolarAngle={Math.PI / 2}
+                                autoRotate
+                                autoRotateSpeed={0.5}
+                              />
+                              <Suspense fallback={<CanvasLoader />}>
+                                <Girl
+                                  position-y={-3}
+                                  scale={3}
+                                  animationName="victory"
+                                />
+                                <Environment preset="sunset" />
+                              </Suspense>
+                            </Canvas>
                           </div>
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-center justify-between">
-                              <p className="text-sm font-medium text-gray-800 truncate">
-                                {entry.tripName || "Trip"}
-                              </p>
-                              <div className="flex items-center text-xs text-gray-400">
-                                <Clock size={10} className="mr-1" />
-                                <span>
-                                  {entry.date
-                                    ? new Date(entry.date).toLocaleDateString()
-                                    : "Date N/A"}
-                                </span>
-                              </div>
+                        </ErrorBoundary>
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-800 to-purple-800">
+                          <div className="text-center p-6">
+                            <div className="w-16 h-16 mx-auto mb-3 bg-pink-500/30 rounded-full flex items-center justify-center">
+                              <span
+                                role="img"
+                                aria-label="star"
+                                className="text-2xl"
+                              >
+                                ⭐
+                              </span>
                             </div>
-                            <p className="mt-1 text-xs text-gray-500 line-clamp-2">
-                              {entry.content
-                                ? entry.content.length > 80
-                                  ? entry.content.substring(0, 80) + "..."
-                                  : entry.content
-                                : "No content available"}
+                            <h4 className="text-white font-medium">
+                              Voyageur Experience
+                            </h4>
+                            <p className="text-indigo-200 text-sm mt-2">
+                              Discover amazing destinations
                             </p>
                           </div>
-                        </motion.div>
-                      ))}
+                        </div>
+                      )}
 
-                      {/* Create New Journal Entry Button */}
-                    </div>
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-purple-900/90 to-transparent p-4 text-center">
+                        <motion.p
+                          className="text-white text-sm font-medium"
+                          animate={{ y: [0, -5, 0] }}
+                          transition={{ repeat: Infinity, duration: 2 }}
+                        >
+                          Interactive Guide
+                        </motion.p>
+                      </div>
+                    </motion.div>
                   </div>
                 </motion.div>
               </div>
@@ -1268,112 +1355,6 @@ const Dashboard = () => {
                     </table>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          )}
-
-          {activeTab === "journal" && (
-            <motion.div
-              key="journal"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
-              className="my-6"
-            >
-              <div className="bg-white rounded-2xl shadow-md p-6">
-                <div className="flex justify-between items-center mb-8">
-                  <h2 className="text-2xl font-bold text-gray-800 flex items-center">
-                    <Book className="mr-3 h-6 w-6 text-indigo-500" />
-                    Travel Journal
-                  </h2>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-medium flex items-center gap-2"
-                    onClick={() => setJournalModalOpen(true)}
-                  >
-                    <Plus size={16} />
-                    New Journal Entry
-                  </motion.button>
-                </div>
-
-                {allJournalEntries.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {allJournalEntries.map((entry, index) => (
-                      <motion.div
-                        key={`journal-full-${index}`}
-                        whileHover={{ y: -5 }}
-                        className="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300"
-                      >
-                        <div className="flex">
-                          <div className="w-1/3">
-                            <div className="h-full">
-                              <img
-                                src={
-                                  entry.image ||
-                                  "https://via.placeholder.com/300x400?text=Trip+Memory"
-                                }
-                                alt={entry.destination || "Trip memory"}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                          </div>
-
-                          <div className="w-2/3 p-4">
-                            <div className="flex justify-between items-start">
-                              <div>
-                                <h3 className="font-bold text-lg text-gray-800">
-                                  {entry.title || "Journal Entry"}
-                                </h3>
-                                <p className="text-indigo-600 text-sm">
-                                  {entry.tripName || "Trip"}
-                                </p>
-                              </div>
-                              <div className="bg-indigo-100 text-indigo-700 text-xs rounded-full px-2 py-1">
-                                {entry.date
-                                  ? new Date(entry.date).toLocaleDateString()
-                                  : "Date N/A"}
-                              </div>
-                            </div>
-
-                            <div className="mt-4 text-gray-600 text-sm line-clamp-4">
-                              {entry.content || "No content available"}
-                            </div>
-
-                            <div className="mt-4 flex justify-between items-center">
-                              <div className="flex items-center text-xs text-gray-500">
-                                <MapPin size={12} className="mr-1" />
-                                {entry.destination || "Unknown location"}
-                              </div>
-
-                              <button className="text-indigo-600 text-sm font-medium flex items-center">
-                                Read More
-                                <ChevronRight size={16} className="ml-1" />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-12 bg-gray-50 rounded-xl">
-                    <Book className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                    <h3 className="text-lg font-medium text-gray-800 mb-2">
-                      No Journal Entries Yet
-                    </h3>
-                    <p className="text-gray-600 mb-6">
-                      Start documenting your travel memories
-                    </p>
-                    <button
-                      className="px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium"
-                      onClick={() => setJournalModalOpen(true)}
-                    >
-                      Create Your First Entry
-                    </button>
-                  </div>
-                )}
               </div>
             </motion.div>
           )}

@@ -92,28 +92,8 @@ const HomePage = () => {
     { icon: <MdOutdoorGrill className="text-xl" />, text: "Outdoor Grill/BBQ" },
   ];
 
-  const handleFilterClick = (filter) => {
-    // Create ripple effect on click
-    const createRipple = (event) => {
-      const button = event.currentTarget;
-      const circle = document.createElement("span");
-      const diameter = Math.max(button.clientWidth, button.clientHeight);
-
-      circle.style.width = circle.style.height = `${diameter}px`;
-      circle.style.left = `${
-        event.clientX - button.offsetLeft - diameter / 2
-      }px`;
-      circle.style.top = `${event.clientY - button.offsetTop - diameter / 2}px`;
-      circle.classList.add("ripple");
-
-      const ripple = button.getElementsByClassName("ripple")[0];
-      if (ripple) {
-        ripple.remove();
-      }
-
-      button.appendChild(circle);
-    };
-
+  // Updated handleFilterClick to correctly use the event parameter
+  const handleFilterClick = (filter, event) => {
     // Update selected filters
     setSelectedFilters((prev) =>
       prev.includes(filter)
@@ -256,13 +236,17 @@ const HomePage = () => {
                       }}
                       whileTap={{ scale: 0.95 }}
                       onClick={(e) => {
-                        handleFilterClick(filter.text);
+                        // Pass the event to handleFilterClick
+                        handleFilterClick(filter.text, e);
+
                         // Animation of icon on selection
                         const icon = e.currentTarget.querySelector("svg");
                         if (icon) {
-                          const animation = selectedFilters.includes(
+                          const isSelected = selectedFilters.includes(
                             filter.text
-                          )
+                          );
+                          // Toggle animation based on new state (opposite of current)
+                          const animation = !isSelected
                             ? { scale: [1, 1.3, 1] }
                             : { rotate: [0, -10, 10, -5, 5, 0] };
 
@@ -366,7 +350,7 @@ const HomePage = () => {
                     {filter}
                     <button
                       className="ml-1 hover:bg-gray-200 rounded-full w-4 h-4 flex items-center justify-center"
-                      onClick={() => handleFilterClick(filter)}
+                      onClick={(e) => handleFilterClick(filter, e)}
                     >
                       ×
                     </button>

@@ -7,17 +7,111 @@ const cloudinary = require("cloudinary").v2;
 const multer = require("multer");
 const Stripe = require("stripe");
 const app = express();
-app.use(cors());
+
+// Debug Stripe keys (truncated for security)
+console.log(
+  "STRIPE_SECRET_KEY prefix:",
+  process.env.VITE_STRIPE_SECRET_KEY?.substring(0, 7) + "..."
+);
+console.log(
+  "STRIPE_PUBLISHABLE_KEY prefix:",
+  process.env.VITE_STRIPE_PUBLISHABLE_KEY?.substring(0, 7) + "..."
+);
+
+// Initialize Stripe with your secret key
+const stripe = Stripe(process.env.VITE_STRIPE_SECRET_KEY);
+
+// Middleware configuration
+// Standard middleware first EXCEPT for the webhook route
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
+// IMPORTANT: Webhook route needs raw body parser before JSON parser
+app.post(
+  "/api/stripe-webhook",
+  express.raw({ type: "application/json" }),
+  async (req, res) => {
+    const signature = req.headers["stripe-signature"];
+    let event;
+
+    try {
+      // Verify the event came from Stripe
+      event = stripe.webhooks.constructEvent(
+        req.body,
+        signature,
+        process.env.VITE_STRIPE_WEBHOOK_SECRET
+      );
+      console.log("✅ Webhook received:", event.type);
+    } catch (err) {
+      console.error(`⚠️ Webhook signature verification failed.`, err.message);
+      return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    // Handle specific events
+    try {
+      const db = client.db("propertydhundo");
+
+      switch (event.type) {
+        case "checkout.session.completed":
+          const session = event.data.object;
+
+          await db.collection("bookings").updateOne(
+            { sessionId: session.id },
+            {
+              $set: {
+                status: "confirmed",
+                paymentDate: new Date().toISOString(),
+                bookingId: `BK${Math.floor(100000 + Math.random() * 900000)}`,
+              },
+            }
+          );
+          console.log("✅ Booking confirmed:", session.id);
+          break;
+
+        case "payment_intent.payment_failed":
+          const paymentIntent = event.data.object;
+          const session_id = paymentIntent.metadata?.session_id;
+
+          if (session_id) {
+            await db
+              .collection("bookings")
+              .updateOne(
+                { sessionId: session_id },
+                { $set: { status: "failed" } }
+              );
+            console.log("❌ Payment failed for session:", session_id);
+          }
+          break;
+      }
+
+      res.json({ received: true });
+    } catch (error) {
+      console.error(`❌ Error processing webhook: ${error.message}`);
+      res.status(500).send(`Webhook Error: ${error.message}`);
+    }
+  }
+);
+
+// Apply JSON parser AFTER webhook route
 app.use(express.json());
 
+// Multer setup for file uploads
 const upload = multer({ storage: multer.memoryStorage() });
 
+// Cloudinary configuration
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+// MongoDB connection
 const Db = process.env.VITE_MONGODB_URI;
 const client = new MongoClient(Db);
 
@@ -31,6 +125,20 @@ async function connectDB() {
 }
 connectDB();
 
+// API to expose Stripe publishable key
+app.get("/api/config/stripe-key", (req, res) => {
+  if (!process.env.VITE_STRIPE_PUBLISHABLE_KEY) {
+    return res.status(500).json({
+      error: "Stripe publishable key not configured",
+    });
+  }
+
+  res.json({
+    publishableKey: process.env.VITE_STRIPE_PUBLISHABLE_KEY,
+  });
+});
+
+// Properties endpoints
 app.get("/api/properties", async (req, res) => {
   try {
     const db = client.db("propertydhundo");
@@ -170,6 +278,7 @@ app.delete("/api/properties/:id", async (req, res) => {
   }
 });
 
+// Trips endpoints
 app.get("/api/trips", async (req, res) => {
   try {
     const db = client.db("propertydhundo");
@@ -335,5 +444,205 @@ app.delete("/api/trips/:id", async (req, res) => {
   }
 });
 
+// ===== STRIPE PAYMENT ENDPOINTS =====
+
+// Simple test endpoint to verify Stripe credentials
+app.get("/api/test-stripe", async (req, res) => {
+  try {
+    // Just check if we can connect to Stripe API
+    await stripe.paymentMethods.list({ limit: 1 });
+    res.json({
+      success: true,
+      message: "Stripe connection is working",
+      publishableKey:
+        process.env.VITE_STRIPE_PUBLISHABLE_KEY?.substring(0, 7) + "...",
+    });
+  } catch (error) {
+    console.error("❌ Stripe connection test failed:", error);
+    res.status(500).json({
+      success: false,
+      message: "Stripe connection failed",
+      error: error.message,
+    });
+  }
+});
+
+// FIXED: Updated create-checkout-session endpoint to use session.url directly
+app.post("/api/create-checkout-session", async (req, res) => {
+  try {
+    console.log("Creating checkout session with data:", req.body);
+
+    const {
+      propertyId,
+      propertyName,
+      checkIn,
+      checkOut,
+      guests,
+      priceDetails,
+    } = req.body;
+
+    // Basic validation
+    if (!propertyId || !propertyName) {
+      return res.status(400).json({ error: "Missing required booking data" });
+    }
+
+    // Format currency properly
+    const amountInCents = Math.round((priceDetails?.total || 100) * 100);
+
+    // Get frontend domain for URLs
+    const frontendDomain = process.env.FRONTEND_URL || "http://localhost:5173";
+
+    // Create the session with proper parameters for direct checkout
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: `Booking: ${propertyName}`,
+              description: `${guests} guests, Check-in: ${new Date(
+                checkIn
+              ).toLocaleDateString()}`,
+            },
+            unit_amount: amountInCents,
+          },
+          quantity: 1,
+        },
+      ],
+      mode: "payment",
+      success_url: `${frontendDomain}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${frontendDomain}/payment/${propertyId}`,
+      metadata: {
+        propertyId: propertyId.toString(),
+        propertyName,
+        checkIn,
+        checkOut,
+        guests: String(guests),
+      },
+    });
+
+    console.log("✅ Session created:", session.id);
+    console.log("  → Payment Link:", session.url);
+
+    // Store booking info
+    try {
+      const db = client.db("propertydhundo");
+      await db.collection("bookings").insertOne({
+        sessionId: session.id,
+        propertyId,
+        propertyName,
+        checkIn,
+        checkOut,
+        guests,
+        totalAmount: priceDetails?.total || 100,
+        status: "pending",
+        createdAt: new Date().toISOString(),
+        paymentUrl: session.url,
+      });
+    } catch (dbError) {
+      console.warn(
+        "Warning: Could not save booking to database",
+        dbError.message
+      );
+      // Continue with payment flow even if DB storage fails
+    }
+
+    // Return the actual session URL provided by Stripe - this is the key fix
+    res.json({
+      checkoutUrl: session.url,
+    });
+  } catch (error) {
+    console.error("❌ Error creating checkout session:", {
+      message: error.message,
+      type: error.type,
+      code: error.code,
+    });
+
+    res.status(500).json({
+      error: "Failed to create checkout session",
+      message: error.message,
+      code: error.code || "unknown_error",
+    });
+  }
+});
+
+// Retrieve booking details after successful payment
+app.get("/api/booking/details", async (req, res) => {
+  try {
+    const { session_id } = req.query;
+
+    if (!session_id) {
+      return res.status(400).json({ error: "Session ID is required" });
+    }
+
+    const db = client.db("propertydhundo");
+    let booking = await db
+      .collection("bookings")
+      .findOne({ sessionId: session_id });
+
+    if (!booking) {
+      // If not in our DB, fetch from Stripe
+      try {
+        console.log("Fetching session from Stripe:", session_id);
+        const session = await stripe.checkout.sessions.retrieve(session_id);
+
+        // Create a booking object from Stripe data
+        booking = {
+          sessionId: session.id,
+          propertyId: session.metadata?.propertyId || "unknown",
+          propertyName: session.metadata?.propertyName || "Property",
+          checkIn: session.metadata?.checkIn || new Date().toISOString(),
+          checkOut: session.metadata?.checkOut || new Date().toISOString(),
+          guests: session.metadata?.guests || 2,
+          total: session.amount_total / 100, // Convert from cents
+          status: session.payment_status === "paid" ? "confirmed" : "pending",
+          paymentMethod: "card",
+          paymentDate: new Date().toISOString(),
+          bookingId: `BK${Math.floor(100000 + Math.random() * 900000)}`,
+        };
+
+        // Save this booking to our database
+        await db.collection("bookings").insertOne(booking);
+        console.log("Created booking from Stripe session:", booking.bookingId);
+      } catch (stripeError) {
+        console.error("Error fetching from Stripe:", stripeError);
+        return res.status(404).json({ error: "Booking not found" });
+      }
+    }
+
+    res.json(booking);
+  } catch (error) {
+    console.error("❌ Error retrieving booking details:", error);
+    res.status(500).json({ error: "Failed to retrieve booking details" });
+  }
+});
+
+// Get all bookings
+app.get("/api/bookings", async (req, res) => {
+  try {
+    const { userId } = req.query;
+    const db = client.db("propertydhundo");
+
+    let query = {};
+    if (userId) {
+      query.userId = userId;
+    }
+
+    const bookings = await db
+      .collection("bookings")
+      .find(query)
+      .sort({ createdAt: -1 })
+      .toArray();
+
+    res.json(bookings);
+  } catch (error) {
+    console.error("❌ Error fetching bookings:", error);
+    res.status(500).json({ error: "Failed to fetch bookings" });
+  }
+});
+
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () =>
+  console.log(`🚀 Server running on port ${PORT} - ${new Date().toISOString()}`)
+);

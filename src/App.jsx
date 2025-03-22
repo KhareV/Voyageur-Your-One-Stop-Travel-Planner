@@ -26,6 +26,9 @@ import CountryList from "../src/components-1/CountryList.jsx";
 import Form from "../src/components-1/Form.jsx";
 import ChatBot from "react-chatbotify";
 import AITravelPlannerPage from "./components/AITravelPlanner.jsx";
+import PaymentPage from "./components/PaymentPage.jsx";
+import PaymentSuccess from "./components/PaymentSuccess.jsx";
+import Journals from "./components/Journals.jsx";
 const ProtectedRoute = ({ children }) => {
   const { isLoaded, isSignedIn } = useUser();
 
@@ -66,6 +69,10 @@ const App = () => {
               path="/user-dashboard/itinerary"
               element={<AITravelPlannerPage />}
             />
+            <Route path="/user-dashboard/journals" element={<Journals />} />
+
+            <Route path="/payment/:propertyId" element={<PaymentPage />} />
+            <Route path="/booking/success" element={<PaymentSuccess />} />
             <Route path="/" element={<HomePage />} />
             <Route path="/" element={<HomePage />} />
 
