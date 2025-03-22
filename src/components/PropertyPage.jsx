@@ -8,7 +8,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "photoswipe/dist/photoswipe.css";
 import "leaflet/dist/leaflet.css";
-
+import { SignedIn, SignedOut } from "@clerk/clerk-react";
 // Import icons
 import {
   FaBed,
@@ -559,35 +559,50 @@ const PropertyDetails = () => {
                   )}
               </div>
             </div>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.97 }}
-              className="w-full mt-4 mb-2 py-3 px-5 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center"
-              onClick={() => navigate(`/payment/${property._id}`)}
-            >
-              <FaDollarSign className="mr-2" />
-              Book Now & Pay
-            </motion.button>
-            // In smaller screens, it could be a fixed button at the bottom
-            <div className="md:hidden fixed left-0 right-0 bottom-0 p-4 bg-white border-t border-gray-200 shadow-lg z-30">
+
+            <SignedIn>
               <motion.button
-                whileHover={{ scale: 1.03 }}
+                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.97 }}
-                className="w-full py-3 px-5 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-lg font-semibold shadow-md hover:shadow-lg"
+                className="w-full mt-4 mb-2 py-3 px-5 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center"
                 onClick={() => navigate(`/payment/${property._id}`)}
               >
-                <span className="flex items-center justify-center">
-                  <FaDollarSign className="mr-2" />
-                  Book Now - $
-                  {property.rates.nightly ||
-                    property.rates.monthly ||
-                    "Contact"}
-                  /night
-                </span>
+                <FaDollarSign className="mr-2" />
+                Book Now & Pay
               </motion.button>
-            </div>
+            </SignedIn>
+            <SignedOut>
+              <button
+                className="m-10 px-10 py-5 bg-red-500/10 text-md font-bold rounded-2xl transform transition-all duration-200 hover:scale-105 hover:bg-red-500 hover:border-red-600 hover:text-white ease-in-out border-2 border-red-200"
+                onClick={() => {
+                  navigate("/sign-in");
+                }}
+              >
+                Login to continue
+              </button>
+            </SignedOut>
+            <SignedIn>
+              <div className="md:hidden fixed left-0 right-0 bottom-0 p-4 bg-white border-t border-gray-200 shadow-lg z-30">
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="w-full py-3 px-5 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-lg font-semibold shadow-md hover:shadow-lg"
+                  onClick={() => navigate(`/payment/${property._id}`)}
+                >
+                  <span className="flex items-center justify-center">
+                    <FaDollarSign className="mr-2" />
+                    Book Now - $
+                    {property.rates.nightly ||
+                      property.rates.monthly ||
+                      "Contact"}
+                    /night
+                  </span>
+                </motion.button>
+              </div>
+            </SignedIn>
+
             {/* Contact buttons */}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 items-center justify-between text-center">
               {property.seller_info?.phone && (
                 <motion.a
                   href={`tel:${property.seller_info.phone}`}

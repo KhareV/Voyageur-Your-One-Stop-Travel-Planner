@@ -100,8 +100,6 @@ const App = () => {
             />
             <Route path="/user-dashboard/trips/:id" element={<TripDetails />} />
             <Route path="/user-dashboard/add-trip" element={<AddTrip />} />
-            <Route path="/user-dashboard/chat" element={<ChatBot />} />
-            <Route path="/user-dashboard/chat" element={<ChatBot />} />
 
             <Route path="/user-dashboard/user-map" element={<AppLayout />}>
               <Route
